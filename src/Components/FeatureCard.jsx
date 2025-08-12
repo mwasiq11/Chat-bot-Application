@@ -1,10 +1,15 @@
-import React from "react";
 
-export default function FeatureCard({ title, description }) {
+import React from 'react'
+
+function FeatureCard() {
   return (
-    <div className="bg-black/40 backdrop-blur-md p-4 rounded-xl border border-gray-700 hover:border-gray-500 transition-colors">
-      <h3 className="text-white font-semibold mb-1">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
+    
+    <div className="flex flex-col">
+    <div className="h-[8rem] w-[12rem] bg-[#e5e9ee] backdrop-blur-lg rounded-2xl text-black flex justity-center items-center shadow-lg hover:shadow-xl ">
+
     </div>
-  );
+  </div>
+  )
 }
+
+export default FeatureCard

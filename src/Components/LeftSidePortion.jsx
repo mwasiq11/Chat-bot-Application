@@ -1,13 +1,21 @@
 import React from "react";
 
-export default function Sidebar() {
+export function LeftSidePortion() {
   return (
-    <aside className="bg-gradient-to-b from-gray-900 to-gray-800 text-white w-64 p-4 flex flex-col">
-      <h2 className="text-lg font-semibold mb-4">Chat History</h2>
-      <ul className="space-y-2">
-        <li className="p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600">Conversation 1</li>
-        <li className="p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600">Conversation 2</li>
-      </ul>
-    </aside>
+    <div className="flex flex-col w-64 bg-[#edf0f3] min-h-screen rounded-[1rem] backdrop-blur-lg border-2 border-gray-200  text-white p-5 overflow-y-auto ml-2">
+      <div className="flex flex-row items-center gap-2">
+        <img
+          className="flex flex-row w-[2.5rem] h-auto "
+          src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
+          alt="logo"
+        />
+        <h1 className="flex flex-row text-[1.7rem] text-gray-700 font-bold ">
+          AI Assisstent{" "}
+        </h1>
+      </div>
+      <hr className="border-t border-gray-300 my-4 "/>
+
+      <h3 className="text-[#2D3031] text-xl mt-4 font-serif">History</h3>
+    </div>
   );
 }

@@ -1,37 +1,18 @@
-import React from "react";
-import FeatureCard from "./FeatureCard";
-import SearchBar from "./Searchbar";
-export default function MainContent() {
+import React from 'react'
+
+function MainContent() {
   return (
-    <main className="flex-1 bg-gradient-to-b from-gray-900 via-black to-gray-900 text-center p-8">
-      <div className="mt-32">
-        <h1 className="text-3xl font-light text-gray-300">
-          Good morning <span className="text-white font-medium">Anna</span>, ready to start?
+    <div className='flex flex-col items-center lg:mt-12 lg:ml-[8rem] sm:mt-2 '> 
+      <h1 className='md:text-3xl items-center text-gray-700  font-serif lg:text-[2.5rem]'>Good Morning <span className='text-[#cf32b2]'>Muhammad, </span> 
+        <br />
+        <span className='text-[#a015e0]'>How Can I</span> <span className='text-[#6745df]'>Assist You Today?</span>
         </h1>
-
-        <div className="mt-6 flex justify-center">
-          <SearchBar />
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <FeatureCard
-            title="My Weekly Reports"
-            description="Your weekly reports are already here. See what I have prepared."
-          />
-          <FeatureCard
-            title="Dashboard Designer"
-            description="Design dashboards your way – fast, simple, and fully personalised."
-          />
-          <FeatureCard
-            title="Advanced Analysis"
-            description="Go beyond the basics – discover new, game-changing insights."
-          />
-        </div>
-
-        <p className="mt-10 text-gray-600 text-xs">
-          Disclaimer: This chatbot uses Artificial Intelligence to generate analytical insights...
-        </p>
-      </div>
-    </main>
-  );
+        <p className="text-gray-500 text-[0.4rem] lg:text-xl font-semibold lg:mt-3">
+            Use one of the most common prompts below or use your own to begin
+          </p>
+    </div>
+  )
 }
+
+export default MainContent
+

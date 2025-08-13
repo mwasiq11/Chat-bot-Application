@@ -1,15 +1,3 @@
-// import React from "react";
-
-// function InputBar() {
-//   return (
-//     <div className="flex flex-col items-center">
-//       <textarea className="min-w-[60rem] min-h-[10rem] bg-[#FFFFFF] rounded-[2rem] backdrop-blur-lg border border-[#EDF0F3] text-gray-700 placeholder:bg-white/70 outline-none"></textarea>
-//     </div>
-//   );
-// }
-
-// export default InputBar;
-
 import React from 'react';
 
 const Input = () => {
@@ -26,7 +14,7 @@ const Input = () => {
                   <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
                 </svg>
               </label>
-                <span className="text-sm text-gray-500 font-normal">Add Image</span>
+                <span className="text-sm text-gray-500 font-normal">Add Attachment</span>
             </div>
             <div className="absolute right-3 bottom-3">
               <button className="rounded-lg p-2 bg-white hover:bg-white/10 text-purple-500 hover:text-[#086cee] cursor-pointer transition-colors" type="button">

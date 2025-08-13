@@ -22,8 +22,8 @@ function FeatureCard() {
 
         <div className="flex items-end">
           <img
-            className="h-10 w-auto drop-shadow-md"
-            src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png"
+            className="h-10 w-auto drop-shadow-md "
+            src="./public/assets/Profile-icon.png"
             alt="profile-icon"
           />
         </div>
@@ -42,7 +42,7 @@ function FeatureCard() {
           "
       >
         <p className="font-medium text-gray-700 leading-snug">
-         Generate a email to reply to a job offer
+          Generate a email to reply to a job offer
         </p>
 
         <div className="flex items-end">
@@ -67,7 +67,7 @@ function FeatureCard() {
           "
       >
         <p className="font-medium text-gray-700 leading-snug">
-         Summarize this article or text for me in one paragraph
+          Summarize this article or text for me in one paragraph
         </p>
 
         <div className="flex items-end">

@@ -1,31 +1,34 @@
-
-import React from 'react'
-import { LeftSidePortion } from './Components/LeftSidePortion'
-import MainContent from "./Components/MainContent"
-import FeatureCard from "./Components/FeatureCard"
-import InputBar from './Components/InputBar'
+import MainContent from "./Components/MainContent";
+import FeatureCard from "./Components/FeatureCard";
+import InputBar from './Components/InputBar';
+import SidebarToggle from './Components/SidebarToggle';
 
 function App() {
   return (
-    <div className='flex h-screen w-screen bg-[#F8FAFB] rounded-[0.3rem]'>
-      {/* Sidebar */}
-      <LeftSidePortion/>
+    <div className='flex h-screen w-screen bg-[#F8FAFB] rounded-[0.3rem] overflow-hidden'>
+      {/* Sidebar - overlay */}
+      <SidebarToggle />
 
-      {/* Main Content Area */}
-      <div className='flex flex-col flex-1 overflow-y-auto'>
-        <MainContent/>
-        <div className='mt-10 px-4'>
-          <FeatureCard/>
+      {/* Main content always full width */}
+      <div className='flex flex-col w-full h-full overflow-y-auto px-4 sm:pl-72'>
+        {/* sm:pl-72 → leaves space on desktop so content doesn't go under the sidebar */}
+        
+        <MainContent />
+        
+        <div className='mt-10'>
+          <FeatureCard />
         </div>
+
         <div className='mt-15'>
-          <InputBar/>
+          <InputBar />
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
+
 
 
 

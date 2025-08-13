@@ -3,6 +3,7 @@ import React from 'react'
 import { LeftSidePortion } from './Components/LeftSidePortion'
 import MainContent from "./Components/MainContent"
 import FeatureCard from "./Components/FeatureCard"
+import InputBar from './Components/InputBar'
 
 function App() {
   return (
@@ -16,12 +17,17 @@ function App() {
         <div className='mt-10 px-4'>
           <FeatureCard/>
         </div>
+        <div className='mt-15'>
+          <InputBar/>
+        </div>
       </div>
     </div>
   )
 }
 
 export default App
+
+
 
 
 

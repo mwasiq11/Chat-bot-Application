@@ -2,7 +2,7 @@ import React from 'react'
 
 function MainContent() {
   return (
-    <div className='flex flex-col items-center lg:mt-12 lg:ml-[8rem] sm:mt-2 '> 
+    <div className='flex flex-col items-center lg:mt-12 sm:mt-2 '> 
       <h1 className='md:text-3xl items-center text-gray-700  font-serif lg:text-[2.5rem]'>Good Morning <span className='text-[#cf32b2]'>Muhammad, </span> 
         <br />
         <span className='text-[#a015e0]'>How Can I</span> <span className='text-[#6745df]'>Assist You Today?</span>

@@ -9,7 +9,7 @@ export function LeftSidePortion() {
           src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
           alt="logo"
         />
-        <h1 className="flex flex-row text-[1.7rem] text-gray-700 font-bold ">
+        <h1 className="flex flex-row text-[1.6rem] text-gray-700 font-bold ">
           AI Assisstent{" "}
         </h1>
       </div>

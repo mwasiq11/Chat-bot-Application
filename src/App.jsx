@@ -2,6 +2,7 @@ import MainContent from "./Components/MainContent";
 import FeatureCard from "./Components/FeatureCard";
 import InputBar from './Components/InputBar';
 import SidebarToggle from './Components/SidebarToggle';
+import ThemeToggle from "./Components/ThemeToggle";
 
 function App() {
   return (
@@ -10,7 +11,8 @@ function App() {
       <SidebarToggle />
 
       {/* Main content always full width */}
-      <div className='flex flex-col w-full h-full overflow-y-auto px-4 sm:pl-72'>
+     
+  <div className='flex flex-col w-full h-full overflow-y-auto px-4 sm:pl-72'>
         {/* sm:pl-72 → leaves space on desktop so content doesn't go under the sidebar */}
         
         <MainContent />
@@ -23,6 +25,7 @@ function App() {
           <InputBar />
         </div>
       </div>
+      <ThemeToggle/>
     </div>
   );
 }

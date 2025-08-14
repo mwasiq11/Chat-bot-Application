@@ -5,11 +5,11 @@ function FeatureCard() {
     <div className="grid gap-6 ml-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <div
         className="
-            flex flex-col justify-between
+            flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/70 backdrop-blur-lg
             rounded-2xl text-black 
-            shadow-md hover:shadow-2xl
+            hover:shadow-2xl
             border border-gray-200
             transition-all duration-300 ease-in-out
             hover:-translate-y-1 hover:border-purple-400 hover:shadow-purple-200/70
@@ -30,11 +30,11 @@ function FeatureCard() {
       </div>
       <div
         className="
-            flex flex-col justify-between
+            flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/70 backdrop-blur-lg
             rounded-2xl text-black 
-            shadow-md hover:shadow-2xl
+             hover:shadow-2xl
             border border-gray-200
             transition-all duration-300 ease-in-out
             hover:-translate-y-1 hover:border-purple-400 hover:shadow-purple-200/70
@@ -55,11 +55,11 @@ function FeatureCard() {
       </div>
       <div
         className="
-            flex flex-col justify-between
+            flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/70 backdrop-blur-lg
             rounded-2xl text-black 
-            shadow-md hover:shadow-2xl
+            hover:shadow-2xl
             border border-gray-200
             transition-all duration-300 ease-in-out
             hover:-translate-y-1 hover:border-purple-400 hover:shadow-purple-200/70
@@ -82,9 +82,9 @@ function FeatureCard() {
         className="
             flex flex-col justify-between
             h-[9rem] 
-            bg-white/70 backdrop-blur-lg
+            bg-white/70 backdrop-blur-lg shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             rounded-2xl text-black 
-            shadow-md hover:shadow-2xl
+            hover:shadow-2xl
             border border-gray-200
             transition-all duration-300 ease-in-out
             hover:-translate-y-1 hover:border-purple-400 hover:shadow-purple-200/70

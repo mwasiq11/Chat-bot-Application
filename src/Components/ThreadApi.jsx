@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
-const assistant_id = import.meta.env.VITE_ASSISSTENT_ID;
+const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
+console.log("api key=",API_Key);
+console.log("assistent key=",assistant_id);
 
 function ThreadApi() {
   const [data, setData] = useState("");
-  const [response, setResponse] = useState([]);
+  const [response, setResponse] = useState("");
   const [threadId, setThreadId] = useState();
 
-  const CallOpeanAI = async () => {
+  const CallOpenAI = async () => {
 
     try {
       let thread_id = threadId;
@@ -43,15 +45,15 @@ function ThreadApi() {
       const runAssisstent = await fetch(
         `https://api.openai.com/v1/threads/${thread_id}/runs`,
         {
-          method:"POST",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${API_Key}`,
             "Content-Type": "application/json",
             "OpenAI-Beta": "assistants=v2",
-            body: JSON.stringify({
-              assistant_id: assistant_id,
-            })
           },
+          body: JSON.stringify({
+            assistant_id: assistant_id,
+          })
         }
       );
       if (!runAssisstent.ok) {
@@ -81,7 +83,7 @@ function ThreadApi() {
         );
         const dataStatus = await runCheck.json();
         runStatus = dataStatus.status;
-        await new Promise((resolve) => setTimeout(resolve,3000))
+        await new Promise((resolve) => setTimeout(resolve,1000))
        
         if (
           dataStatus === "cancellled" ||
@@ -102,7 +104,15 @@ function ThreadApi() {
           }
         );
         const msgData = await messageResponse.json();
-        setResponse([...msgData.data].reverse());
+        // Find latest assistant response
+       const assistantMsg=msgData.data.find((msg)=> 
+        msg.role==="assistant"
+      )
+      if(assistantMsg && assistantMsg.content && assistantMsg.content[0]?.text?.value){
+        setResponse(assistantMsg.content[0].text.value)
+        
+      }
+      setData("")
       }
     } catch (error) {
       console.log("Fetching error", error);
@@ -114,22 +124,12 @@ function ThreadApi() {
     <div className="w-full py-4">
       <div className="relative max-w-[60rem] w-full mx-auto">
         <div className="relative flex flex-col bg-black/5 outline-none border-none">
-         
-    {response.map((msg, i) => (
-      <div key={i} className="mb-2">
-       {msg.role.toUpperCase()}:
-        {msg.content[0].text.value}
-      </div>
-    ))}
-
-        
           <textarea
             onChange={(e) => setData(e.target.value)}
-           value={data}
+            value={response || data}
             className="w-full min-h-[90px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 bg-[#FFFFFF] text-gray-500 placeholder:text-[#404040] from-neutral-950 border-0 outline-none resize-none focus:ring-0 focus:outline-none leading-[1.2]"
             placeholder="Ask anything"
             id="ai-input"
-            defaultValue={""}
           />
           <div className="h-12 bg-white rounded-b-xl">
             <div className="absolute left-3 bottom-3 flex items-center gap-2">
@@ -156,7 +156,7 @@ function ThreadApi() {
             </div>
             <div className="absolute right-3 bottom-3">
               <button
-                onClick={CallOpeanAI}
+                onClick={CallOpenAI}
                 className="rounded-lg p-2 bg-white hover:bg-white/10 text-purple-500 hover:text-[#086cee] cursor-pointer transition-colors"
                 type="button"
               >

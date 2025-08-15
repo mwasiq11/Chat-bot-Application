@@ -26,11 +26,11 @@ export function LeftSidePortion({ onClose }) {
       {/* Logo */}
       <div className="flex flex-row items-center gap-2">
         <img
-          className="w-[2.5rem] h-auto"
+          className="w-[2.4rem] h-auto"
           src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
           alt="logo"
         />
-        <h1 className="text-[1.6rem] font-bold tracking-tight
+        <h1 className="text-[1.8rem] font-bold tracking-tight
            bg-gradient-to-r from-[#078EFA] to-[#AD89EB]
            bg-clip-text text-transparent">BotRix</h1>
       </div>

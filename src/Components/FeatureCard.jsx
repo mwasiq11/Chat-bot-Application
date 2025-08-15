@@ -21,10 +21,10 @@ function FeatureCard() {
           Write to-do list for personal project or task
         </p>
 
-        <div className="flex items-end">
+        <div className="flex items-end ">
           <img
-            className="h-8 w-auto drop-shadow-md "
-            src="./public/assets/Profile-icon.png"
+            className="h-6 w-auto drop-shadow-md "
+            src="./public/assets/profile_icon.png"
             alt="profile-icon"
           />
         </div>

@@ -4,17 +4,16 @@ import { FaTimes } from "react-icons/fa";
 export function LeftSidePortion({ onClose }) {
   return (
     <div
-      className="
+      className=" text-gray-700
         flex flex-col
         bg-[#edf0f3]
         rounded-[1rem]
         backdrop-blur-lg
         border-2 border-gray-200
-        text-white
         p-5
         overflow-y-auto
         w-64
-        min-h-screen
+        min-h-screen *:text-md
       "
     >
       {/* Close button for mobile */}
@@ -31,12 +30,24 @@ export function LeftSidePortion({ onClose }) {
           src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
           alt="logo"
         />
-        <h1 className="text-[1.6rem] text-[#1ACF6E] font-bold">BotRix</h1>
+        <h1 className="text-[1.6rem] font-bold tracking-tight
+           bg-gradient-to-r from-[#078EFA] to-[#AD89EB]
+           bg-clip-text text-transparent">BotRix</h1>
       </div>
 
       <hr className="border-t border-gray-300 my-4" />
 
-      <h3 className="text-[#2D3031] text-xl mt-4 font-serif">History</h3>
+      <h3 className="text-[#2D3031] text-xl mt-4 font-serif mb-6">History</h3>
+
+      {/* <ul>
+        <li>What is to-do list</li>
+        <li>Tell me about generative Ai</li>
+        <li>What is the weather today</li>
+        <li>How to make a sandwich</li>  
+        <li>What is the capital of France</li>
+        <li>How to learn React</li>
+        <li>What is the best programming language</li>   
+      </ul> */}
     </div>
   );
 }

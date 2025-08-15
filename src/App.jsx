@@ -1,8 +1,8 @@
 import MainContent from "./Components/MainContent";
 import FeatureCard from "./Components/FeatureCard";
-import InputBar from './Components/InputBar';
 import SidebarToggle from './Components/SidebarToggle';
 import ThemeToggle from "./Components/ThemeToggle";
+import ThreadApi from "./Components/ThreadApi";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         </div>
 
         <div className='mt-15'>
-          <InputBar />
+          <ThreadApi />
         </div>
       </div>
       <ThemeToggle/>

@@ -1,6 +1,7 @@
 import React from "react";
 
-function FeatureCard() {
+function FeatureCard({response}) {
+  if(!response) return null;
   return (
     <div className="grid gap-6 ml-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <div

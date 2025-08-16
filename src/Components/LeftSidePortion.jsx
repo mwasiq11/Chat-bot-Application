@@ -38,6 +38,8 @@ export function LeftSidePortion({ onClose }) {
       <hr className="border-t border-gray-300 my-4" />
 
       <h3 className="text-[#2D3031] text-xl mt-4 font-serif mb-6">History</h3>
+     
+      
 
       {/* <ul>
         <li>What is to-do list</li>
@@ -51,3 +53,4 @@ export function LeftSidePortion({ onClose }) {
     </div>
   );
 }
+

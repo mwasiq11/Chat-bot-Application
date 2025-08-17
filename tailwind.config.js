@@ -1,10 +1,16 @@
+import tailwindScrollbar from 'tailwind-scrollbar';
+
+/** @type {import('tailwindcss').Config} */
 // tailwind.config.js
+/** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class", // enables class-based switching
+  darkMode: "class",
   content: [
-   "./index.html",
+    "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: { extend: {} },
-  plugins: [],
+  plugins: [
+  tailwindScrollbar({ nocompatible: true })
+  ],
 };

@@ -53,6 +53,7 @@ function App() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [response]);
+  const threadApiRef=useRef()
 
   return (
     <div className="flex h-screen w-screen bg-[#F8FAFB] rounded-[0.3rem] overflow-hidden">
@@ -64,7 +65,9 @@ function App() {
         {!isConversationStarted ? (
           <>
             <MainContent response={response} />
-            <FeatureCard response={response} />
+            <FeatureCard
+            onCardClick={(text)=> threadApiRef.current.CallOpenAI(text)}
+             response={response} />
           </>
         ) : (
           // Chat Area
@@ -98,6 +101,7 @@ function App() {
         {/* Input Box stays bottom */}
         <div className="flex-1 flex flex-col justify-end">
           <ThreadApi
+          ref={threadApiRef}
             response={response}
             setResponse={setResponse}
             isConversationStarted={isConversationStarted}

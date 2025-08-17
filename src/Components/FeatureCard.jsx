@@ -1,13 +1,14 @@
 import React from "react";
 
-function FeatureCard({response}) {
-  if(!response) return null;
+
+function FeatureCard({onCardClick}) {
+ 
   return (
     <div className="grid gap-6 ml-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <div
+      <div onClick={()=>onCardClick("Write to-do list for personal project or task?")}
         
            className="
-            flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
+                       flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/90 backdrop-blur-lg
             rounded-2xl text-black 
@@ -30,7 +31,7 @@ function FeatureCard({response}) {
           />
         </div>
       </div>
-      <div
+      <div onClick={()=>onCardClick("Generate a email to reply to a job offer?")}
         className="
             flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
@@ -55,7 +56,7 @@ function FeatureCard({response}) {
           />
         </div>
       </div>
-      <div
+      <div onClick={()=>onCardClick("Summarize this article or text for me in one paragraph?")}
         className="
             flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
@@ -80,7 +81,7 @@ function FeatureCard({response}) {
           />
         </div>
       </div>
-      <div
+      <div onClick={()=>onCardClick("How does AI helps programmers to understand complex data structures?")}
         className="
             flex flex-col justify-between
             h-[9rem] 

@@ -7,7 +7,7 @@ function MainContent() {
         <br />
         <span className='text-[#a015e0]'>How Can I</span> <span className='text-[#6745df]'>Assist You Today?</span>
         </h1> */}
-      <h1 className="text-2xl sm:text-3xl md:text-[48px] leading-tight font-semibold ">
+      <h1 className="text-2xl sm:text-3xl md:text-[48px] leading-tight font-semibold">
         <span>Hi there,</span>
         <span className="bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] bg-clip-text text-transparent">
           Muhammad

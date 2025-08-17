@@ -45,6 +45,7 @@ import SidebarToggle from "./Components/SidebarToggle";
 import ThemeToggle from "./Components/ThemeToggle";
 import ThreadApi from "./Components/ThreadApi";
 import { useRef, useEffect } from "react";
+import SignUp from "./forms/Signup"
 
 function App() {
   const [response, setResponse] = useState([]);
@@ -78,7 +79,7 @@ function App() {
               <div
                 key={index}
                 className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
+                  msg.role === "user" ? "justify-end" : "justify-start mt-5"
                 }`}
               >
                 <div
@@ -86,8 +87,8 @@ function App() {
                    ${
                      msg.role === "user"
                        ? //  "text-black":"text-black"
-                         "bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] text-white rounded-br-none"
-                       : "bg-white text-gray-800 rounded-bl-none border border-gray-200"
+                         "bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] text-white "
+                       : "bg-white text-gray-800  border border-gray-200"
                    }`}
                 >
                   {msg.content}
@@ -111,8 +112,9 @@ function App() {
       </div>
 
       {/* <ThemeToggle /> */}
+      {/* <SignUp/> */}
     </div>
-  );
+    );
 }
 
 export default App;

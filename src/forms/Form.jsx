@@ -2,17 +2,22 @@
 
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthForm() {
-  const [isLogin, setIsLogin] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(isLogin ? "Login Data:" : "Signup Data:", data);
+    const [isLogin, setIsLogin] = useState(false);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+    
+    const navigate=useNavigate()
+    const onSubmit = (data) => {
+        console.log(isLogin ? "Login Data:" : "Signup Data:", data);
+        navigate("/app")
+        
   };
 
   return (

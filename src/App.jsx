@@ -45,7 +45,8 @@ import SidebarToggle from "./Components/SidebarToggle";
 import ThemeToggle from "./Components/ThemeToggle";
 import ThreadApi from "./Components/ThreadApi";
 import { useRef, useEffect } from "react";
-import SignUp from "./forms/Signup"
+
+
 
 function App() {
   const [response, setResponse] = useState([]);
@@ -57,6 +58,7 @@ function App() {
   const threadApiRef=useRef()
 
   return (
+    
     <div className="flex h-screen w-screen bg-[#F8FAFB] rounded-[0.3rem] overflow-hidden">
       {/* Sidebar */}
       <SidebarToggle response={response} />

@@ -194,8 +194,9 @@ const ThreadApi = forwardRef(
                       onClick={() => removeFile(index)}
                       className="text-gray-500 hover:text-red-500"
                     >
-                      ✕
+                     ✖️
                     </button>
+
                   </div>
                 ))}
               </div>
@@ -203,7 +204,7 @@ const ThreadApi = forwardRef(
 
             <div className="h-12 bg-white rounded-b-xl flex justify-between items-center px-3">
               <div className="flex items-center gap-2">
-                <label className="cursor-pointer rounded-lg p-2 bg-gray-700 hover:bg-gray">
+                <label className="cursor-pointer rounded-lg p-2 bg-[#c3c5c1] hover:bg-gray">
                   <input
                     className="hidden"
                     
@@ -212,7 +213,7 @@ const ThreadApi = forwardRef(
                     type="file"
                   />
                   <svg
-                    className="text-white/40 hover:text-white transition-colors"
+                    className="text-gray-800 hover:text-white transition-colors"
                     strokeLinejoin="round"
                     strokeLinecap="round"
                     strokeWidth={2}

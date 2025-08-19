@@ -30,16 +30,17 @@ export function LeftSidePortion({ onClose }) {
           src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
           alt="logo"
         />
-        <h1 className="text-[1.8rem] font-bold tracking-tight
-           bg-gradient-to-r from-[#078EFA] to-[#AD89EB]
-           bg-clip-text text-transparent">BotRix</h1>
+        <h1
+          className="text-[1.8rem] font-bold tracking-tight
+          bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] bg-clip-text text-transparent"
+        >
+          BotRix
+        </h1>
       </div>
 
       <hr className="border-t border-gray-300 my-4" />
 
       <h3 className="text-[#2D3031] text-xl mt-4 font-serif mb-6">History</h3>
-     
-      
 
       {/* <ul>
         <li>What is to-do list</li>
@@ -54,5 +55,6 @@ export function LeftSidePortion({ onClose }) {
   );
 }
 
-{/* <svg width="32" height="32" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M16 12.519H0V14.5H16V12.519Z" fill="current"></path><path d="M16 7.25951H0V9.24049H16V7.25951Z" fill="current"></path><path d="M16 2H0V3.98098H16V2Z" fill="current"></path></svg>*/}
-
+{
+  /* <svg width="32" height="32" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M16 12.519H0V14.5H16V12.519Z" fill="current"></path><path d="M16 7.25951H0V9.24049H16V7.25951Z" fill="current"></path><path d="M16 2H0V3.98098H16V2Z" fill="current"></path></svg>*/
+}

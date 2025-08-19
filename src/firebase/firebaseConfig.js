@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBCNpD1D4DzlUT9uSNBvmkeXYydWge_olU",
-  authDomain: "botrix-e4772.firebaseapp.com",
-  projectId: "botrix-e4772",
-  storageBucket: "botrix-e4772.firebasestorage.app",
-  messagingSenderId: "554727610274",
-  appId: "1:554727610274:web:3a7313c01cb0df690304fb",
-  measurementId: "G-4SJPYQ5J47"
+  apiKey:import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

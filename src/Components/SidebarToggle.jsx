@@ -9,13 +9,15 @@ export default function SidebarToggle() {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 640) {
-        setIsOpen(true); // Desktop: open by default
+        // Desktop: open by default
+        setIsOpen(true);
       } else {
-        setIsOpen(false); // Mobile: closed by default
+        // Mobile: closed by default
+        setIsOpen(false); 
       }
     };
-
-    handleResize(); // Run once on mount
+    // Run once on mount
+    handleResize(); 
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);

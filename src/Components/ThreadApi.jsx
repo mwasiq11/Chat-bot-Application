@@ -1,6 +1,8 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
-import { useRef } from "react";
-import { CgAttachment } from "react-icons/cg";
+import { forwardRef, useImperativeHandle, useState, useRef } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase/firebaseConfig";
+import { getAuth } from "firebase/auth";
+
 const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
 const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
 
@@ -8,6 +10,8 @@ const ThreadApi = forwardRef(
   ({ setResponse, setIsConversationStarted }, ref) => {
     const [data, setData] = useState("");
     const [threadId, setThreadId] = useState();
+    //track Firestore doc
+    const [chatDocId, setChatDocId] = useState(null); 
     const [files, setFile] = useState([]);
     const inputFileRef = useRef(null);
 
@@ -18,15 +22,15 @@ const ThreadApi = forwardRef(
       }
     };
 
-
-    // Add file//
+    // Add file
     const handleFile = (event) => {
       const selectedFile = Array.from(event.target.files);
       if (selectedFile) {
         setFile((prev) => [...prev, ...selectedFile]);
       }
     };
-    // remove file //
+
+    // remove file
     const removeFile = (index) => {
       setFile((prev) => prev.filter((_, i) => i !== index));
     };
@@ -35,13 +39,45 @@ const ThreadApi = forwardRef(
       const prompt = inputText || data;
       if (!prompt.trim()) return;
 
+      const user = getAuth().currentUser;
+      if (!user) {
+        console.warn("No user logged in, skipping Firestore save");
+      }
+
+      // If first message: create chat document in Firestore
+      if (!threadId && user) {
+        try {
+          const chatDoc = await addDoc(collection(db, "usershistory"), {
+            userId: user.uid,
+            title: prompt.slice(0, 30) || "New Chat",
+            createdAt: serverTimestamp(),
+          });
+          setChatDocId(chatDoc.id);
+        } catch (err) {
+          console.error("Error saving chat history:", err);
+        }
+      }
+
+      // Save user message into Firestore messages subcollection
+      if (chatDocId && user) {
+        await addDoc(collection(db, "usershistory", chatDocId, "messages"), {
+          role: "user",
+          content: prompt,
+          attachments: files.map((f) => f.name),
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      // mark conversation started
       setIsConversationStarted(true);
+
+      // add user message to UI state
       setResponse((prev) => [
         ...prev,
         {
           role: "user",
           content: prompt,
-          attachments: files.map((files) => files.name),
+          attachments: files.map((f) => f.name),
         },
       ]);
 
@@ -66,7 +102,7 @@ const ThreadApi = forwardRef(
           setThreadId(thread_id);
         }
 
-        // Send user message
+        // Send user message to OpenAI
         await fetch(`https://api.openai.com/v1/threads/${thread_id}/messages`, {
           method: "POST",
           headers: {
@@ -94,15 +130,8 @@ const ThreadApi = forwardRef(
           }
         );
 
-        if (!runResponse.ok) {
-          const errorData = await runResponse.json();
-          console.error("Run creation failed:", errorData);
-          throw new Error(errorData.error?.message || "Failed to create run");
-        }
-
         const run = await runResponse.json();
         const run_id = run.id;
-        if (!run_id) throw new Error("No run_id returned from API");
 
         // Poll for run status
         let runStatus = "in_progress";
@@ -147,14 +176,30 @@ const ThreadApi = forwardRef(
           const assistantMsg = msgData.data.find(
             (msg) => msg.role === "assistant"
           );
+
           if (assistantMsg?.content[0]?.text?.value) {
             const reply = assistantMsg.content[0].text.value;
+
+            // show in UI
             setResponse((prev) => [
               ...prev,
               { role: "assistant", content: reply },
             ]);
+
+            //  save assistant reply in Firestore
+            if (chatDocId && user) {
+              await addDoc(
+                collection(db, "usershistory", chatDocId, "messages"),
+                {
+                  role: "assistant",
+                  content: reply,
+                  createdAt: serverTimestamp(),
+                }
+              );
+            }
           }
         }
+
         setFile([]);
         setData("");
       } catch (error) {
@@ -170,7 +215,7 @@ const ThreadApi = forwardRef(
 
     return (
       <div className="w-full py-4">
-        <div className="relative max-w-[60rem] w-full mx-auto">
+        <div className="relative  w-full mx-auto">
           <div className="relative flex flex-col bg-black/5 outline-none border-none">
             <textarea
               onChange={(e) => setData(e.target.value)}
@@ -194,9 +239,8 @@ const ThreadApi = forwardRef(
                       onClick={() => removeFile(index)}
                       className="text-gray-500 hover:text-red-500"
                     >
-                     ✖️
+                      ✖️
                     </button>
-
                   </div>
                 ))}
               </div>
@@ -207,7 +251,6 @@ const ThreadApi = forwardRef(
                 <label className="cursor-pointer rounded-lg p-2 bg-[#c3c5c1] hover:bg-gray">
                   <input
                     className="hidden"
-                    
                     onChange={handleFile}
                     ref={inputFileRef}
                     type="file"
@@ -260,3 +303,4 @@ const ThreadApi = forwardRef(
 );
 
 export default ThreadApi;
+

@@ -4,19 +4,7 @@ import HistorySidebar from "./HistorySidebar";
 
 export function LeftSidePortion({ onClose }) {
   return (
-    <div
-      className=" text-gray-700
-        flex flex-col
-        bg-[#edf0f3]
-        rounded-[1rem]
-        backdrop-blur-lg
-        border-2 border-gray-200
-        p-5
-        overflow-y-auto
-        w-64
-        min-h-screen *:text-md
-      "
-    >
+    <div className="flex flex-col bg-[#edf0f3] rounded-t-[1rem] rounded-b-[1rem] backdrop-blur-lg border-2 border-gray-200 p-5 h-screen w-64">
       {/* Close button for mobile */}
       <div className="sm:hidden flex justify-end">
         <button onClick={onClose} className="text-gray-500 text-xl">
@@ -42,9 +30,11 @@ export function LeftSidePortion({ onClose }) {
       <hr className="border-t border-gray-300 my-4" />
 
       <h3 className="text-[#2D3031] text-xl mt-4 font-serif mb-6">History</h3>
-      <HistorySidebar/>
+
+      {/* Scrollable history list */}
+      <div className="flex-1 overflow-y-auto hide-scrollbar">
+        <HistorySidebar />
+      </div>
     </div>
   );
 }
-
-

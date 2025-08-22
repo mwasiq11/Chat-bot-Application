@@ -49,7 +49,7 @@ const ThreadApi = forwardRef(
         try {
           const chatDoc = await addDoc(collection(db, "usershistory"), {
             userId: user.uid,
-            title: prompt.slice(0, 30) || "New Chat",
+            title: prompt || "New Chat",
             createdAt: serverTimestamp(),
           });
           setChatDocId(chatDoc.id);

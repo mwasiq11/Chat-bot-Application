@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -36,6 +35,7 @@ export default function HistorySidebar() {
   }, [currentUser]);
 
   return (
+    
     <div className="space-y-2 w-64 border-r border-gray-200">
       <h2 className="font-bold text-lg mb-4"></h2>
       {history.length === 0 ? (
@@ -43,18 +43,16 @@ export default function HistorySidebar() {
       ) : (
         history.map((chat) => (
           <Link
-          key={chat.id}
-            to={`/app/history/${chat.id}`} 
-            className="block p-2 rounded hover:bg-gray-200"
+            key={chat.id}
+            to={`/app/history/${chat.id}`}
+            className="text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
+            title={chat.title || "Untitled Chat"} // Hover shows full text
           >
             {chat.title || "Untitled Chat"}
           </Link>
         ))
       )}
+    
     </div>
   );
 }
-
-
-
-

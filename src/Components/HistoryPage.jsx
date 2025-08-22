@@ -53,13 +53,13 @@ export default function HistoryPage() {
                 msg.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              <div
-                className={`px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow ${
-                  msg.role === "user"
-                    ? "bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] text-white"
-                    : "bg-white text-gray-800 border border-gray-200"
-                }`}
-              >
+                <div
+                  className={`px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow ${
+                    msg.role === "user"
+                      ? "bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] text-white"
+                      : "bg-white text-gray-500 border border-gray-200"
+                  }`}
+                >
                 {msg.content}
               </div>
             </div>

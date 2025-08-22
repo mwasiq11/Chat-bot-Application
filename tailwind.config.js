@@ -1,16 +1,17 @@
 import tailwindScrollbar from 'tailwind-scrollbar';
+import tailwindScrollbarHide from 'tailwind-scrollbar-hide';
 
-/** @type {import('tailwindcss').Config} */
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
 export default {
   darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {},
+  },
   plugins: [
-  tailwindScrollbar({ nocompatible: true })
+    tailwindScrollbar,
+    tailwindScrollbarHide,
   ],
 };

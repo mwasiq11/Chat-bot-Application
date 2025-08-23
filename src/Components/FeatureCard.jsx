@@ -26,7 +26,7 @@ function FeatureCard({ onCardClick, onRefresh }) {
         <div className="flex items-end ">
           <img
             className="h-6 w-auto drop-shadow-md "
-            src="./public/assets/profile_icon.png"
+            src="./assets/profile_icon.png"
             alt="profile-icon"
           />
         </div>
@@ -52,7 +52,7 @@ function FeatureCard({ onCardClick, onRefresh }) {
         <div className="flex items-end">
           <img
             className="h-8 w-auto drop-shadow-md"
-            src="./public/assets/email-icon.png"
+            src="./assets/email-icon.png"
             alt="email-icon"
           />
         </div>
@@ -110,7 +110,7 @@ function FeatureCard({ onCardClick, onRefresh }) {
         <div className="flex items-end">
           <img
             className="h-8 w-auto drop-shadow-md"
-            src="./public/assets/data-icon.png"
+            src="./assets/data-icon.png"
             alt="data-structure-icon"
           />
         </div>

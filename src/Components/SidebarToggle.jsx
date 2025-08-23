@@ -13,11 +13,11 @@ export default function SidebarToggle() {
         setIsOpen(true);
       } else {
         // Mobile: closed by default
-        setIsOpen(false); 
+        setIsOpen(false);
       }
     };
     // Run once on mount
-    handleResize(); 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);

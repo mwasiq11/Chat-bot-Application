@@ -7,10 +7,11 @@ import HistorySidebar from "./Components/HistorySidebar";
 import ThreadApi from "./Components/ThreadApi";
 import HistoryPage from "./Components/HistoryPage";
 import { LeftSidePortion } from "./Components/LeftSidePortion";
-
+import Loader from "./Components/Loader";
 function App() {
   const [response, setResponse] = useState([]);
   const [isConversationStarted, setIsConversationStarted] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
   const bottomRef = useRef();
   const threadApiRef = useRef();
 
@@ -43,9 +44,10 @@ function App() {
                     <Outlet />
                     <FeatureCard
                       onCardClick={(text) =>
-                        threadApiRef.current.CallOpenAI(text)}
-                        response={response}
-                        onRefresh={() => threadApiRef.current.ClearInput()}
+                        threadApiRef.current.CallOpenAI(text)
+                      }
+                      response={response}
+                      onRefresh={() => threadApiRef.current.ClearInput()}
                     />
                   </>
                 ) : (
@@ -71,6 +73,17 @@ function App() {
                         </div>
                       </div>
                     ))}
+                    {/*Loading untill getting response*/}
+                    {isLoading && (
+                      <div className="flex justify-start mt-5">
+                        <div className="px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow bg-white text-gray-800 border border-gray-200 flex items-center gap-2">
+                          <span className="animate-pulse">
+                            Generating response
+                          </span>
+                          <Loader />
+                        </div>
+                      </div>
+                    )}
                     <div ref={bottomRef}></div>
                   </div>
                 )
@@ -90,6 +103,7 @@ function App() {
             setResponse={setResponse}
             isConversationStarted={isConversationStarted}
             setIsConversationStarted={setIsConversationStarted}
+            setisLoading={setisLoading}
           />
         </div>
       </div>

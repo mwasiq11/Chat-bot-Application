@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /usershistory/{docId} {
+      // Allow read if the document's userId matches auth.uid
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+
+      // Allow create if the new doc contains the same userId
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+
+      // Allow update/delete only if user owns the document
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Allow access to messages subcollection
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+        allow create: if request.auth != null;
+      }
+    }
+  }
+}

@@ -7,11 +7,11 @@ const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
 const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
 
 const ThreadApi = forwardRef(
-  ({ setResponse, setIsConversationStarted }, ref) => {
+  ({ setResponse, setIsConversationStarted, setisLoading }, ref) => {
     const [data, setData] = useState("");
     const [threadId, setThreadId] = useState();
     //track Firestore doc
-    const [chatDocId, setChatDocId] = useState(null); 
+    const [chatDocId, setChatDocId] = useState(null);
     const [files, setFile] = useState([]);
     const inputFileRef = useRef(null);
 
@@ -38,20 +38,26 @@ const ThreadApi = forwardRef(
     const CallOpenAI = async (inputText) => {
       const prompt = inputText || data;
       if (!prompt.trim()) return;
+      setisLoading(true);
 
+      // Get current user and ensure they are properly authenticated
       const user = getAuth().currentUser;
       if (!user) {
         console.warn("No user logged in, skipping Firestore save");
       }
 
       // If first message: create chat document in Firestore
-      if (!threadId && user) {
+      let currentChatDocId = chatDocId;
+
+      if (!currentChatDocId && user) {
         try {
           const chatDoc = await addDoc(collection(db, "usershistory"), {
             userId: user.uid,
             title: prompt || "New Chat",
             createdAt: serverTimestamp(),
           });
+
+          currentChatDocId = chatDoc.id;
           setChatDocId(chatDoc.id);
         } catch (err) {
           console.error("Error saving chat history:", err);
@@ -59,13 +65,22 @@ const ThreadApi = forwardRef(
       }
 
       // Save user message into Firestore messages subcollection
-      if (chatDocId && user) {
-        await addDoc(collection(db, "usershistory", chatDocId, "messages"), {
-          role: "user",
-          content: prompt,
-          attachments: files.map((f) => f.name),
-          createdAt: serverTimestamp(),
-        });
+      if (currentChatDocId && user) {
+        try {
+          const messageData = {
+            role: "user",
+            content: prompt,
+            attachments: files.map((f) => f.name),
+            createdAt: serverTimestamp(),
+          };
+
+          await addDoc(
+            collection(db, "usershistory", currentChatDocId, "messages"),
+            messageData
+          );
+        } catch (err) {
+          console.error("Error saving user message to Firestore:", err);
+        }
       }
 
       // mark conversation started
@@ -86,8 +101,40 @@ const ThreadApi = forwardRef(
 
         //  Create a new thread if none exists
         if (!thread_id) {
-          const threadResponse = await fetch(
-            "https://api.openai.com/v1/threads",
+          try {
+            const threadResponse = await fetch(
+              "https://api.openai.com/v1/threads",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${API_Key}`,
+                  "OpenAI-Beta": "assistants=v2",
+                },
+              }
+            );
+
+            if (!threadResponse.ok) {
+              throw new Error(
+                `Failed to create thread: ${threadResponse.status}`
+              );
+            }
+
+            const thread = await threadResponse.json();
+            thread_id = thread.id;
+            setThreadId(thread_id);
+          } catch (threadError) {
+            console.error("Error creating thread:", threadError);
+            throw new Error(
+              "Failed to create conversation thread. Please try again."
+            );
+          }
+        }
+
+        // Send user message to OpenAI
+        try {
+          const messageResponse = await fetch(
+            `https://api.openai.com/v1/threads/${thread_id}/messages`,
             {
               method: "POST",
               headers: {
@@ -95,108 +142,166 @@ const ThreadApi = forwardRef(
                 Authorization: `Bearer ${API_Key}`,
                 "OpenAI-Beta": "assistants=v2",
               },
+              body: JSON.stringify({
+                role: "user",
+                content: prompt,
+              }),
             }
           );
-          const thread = await threadResponse.json();
-          thread_id = thread.id;
-          setThreadId(thread_id);
+
+          if (!messageResponse.ok) {
+            throw new Error(
+              `Failed to send message: ${messageResponse.status}`
+            );
+          }
+        } catch (messageError) {
+          console.error("Error sending message:", messageError);
+          throw new Error("Failed to send your message. Please try again.");
         }
 
-        // Send user message to OpenAI
-        await fetch(`https://api.openai.com/v1/threads/${thread_id}/messages`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${API_Key}`,
-            "OpenAI-Beta": "assistants=v2",
-          },
-          body: JSON.stringify({
-            role: "user",
-            content: prompt,
-          }),
-        });
-
         // Run assistant
-        const runResponse = await fetch(
-          `https://api.openai.com/v1/threads/${thread_id}/runs`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${API_Key}`,
-              "Content-Type": "application/json",
-              "OpenAI-Beta": "assistants=v2",
-            },
-            body: JSON.stringify({ assistant_id }),
-          }
-        );
+        let run_id;
+        try {
+          const runResponse = await fetch(
+            `https://api.openai.com/v1/threads/${thread_id}/runs`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${API_Key}`,
+                "Content-Type": "application/json",
+                "OpenAI-Beta": "assistants=v2",
+              },
+              body: JSON.stringify({ assistant_id }),
+            }
+          );
 
-        const run = await runResponse.json();
-        const run_id = run.id;
+          if (!runResponse.ok) {
+            throw new Error(`Failed to start assistant: ${runResponse.status}`);
+          }
+
+          const run = await runResponse.json();
+          run_id = run.id;
+        } catch (runError) {
+          console.error("Error starting assistant run:", runError);
+          throw new Error("Failed to start the assistant. Please try again.");
+        }
 
         // Poll for run status
         let runStatus = "in_progress";
+        let attempts = 0;
+        const maxAttempts = 60; // 60 seconds timeout
+
         while (runStatus === "in_progress" || runStatus === "queued") {
-          const runCheck = await fetch(
-            `https://api.openai.com/v1/threads/${thread_id}/runs/${run_id}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${API_Key}`,
-                "OpenAI-Beta": "assistants=v2",
-              },
-            }
-          );
-
-          const statusData = await runCheck.json();
-          runStatus = statusData.status;
-
-          if (["cancelled", "expired", "failed"].includes(runStatus)) {
-            throw new Error("Run failed or cancelled/expired.");
+          if (attempts >= maxAttempts) {
+            throw new Error("Request timed out. Please try again.");
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          try {
+            const runCheck = await fetch(
+              `https://api.openai.com/v1/threads/${thread_id}/runs/${run_id}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${API_Key}`,
+                  "OpenAI-Beta": "assistants=v2",
+                },
+              }
+            );
+
+            if (!runCheck.ok) {
+              throw new Error(`HTTP error! status: ${runCheck.status}`);
+            }
+
+            const statusData = await runCheck.json();
+            runStatus = statusData.status;
+
+            if (["cancelled", "expired", "failed"].includes(runStatus)) {
+              throw new Error("Run failed or cancelled/expired.");
+            }
+
+            attempts++;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          } catch (pollError) {
+            console.error("Error polling run status:", pollError);
+            throw new Error(
+              "Failed to check response status. Please try again."
+            );
+          }
         }
 
         //  Fetch messages when completed
         if (runStatus === "completed") {
-          const messageResponse = await fetch(
-            `https://api.openai.com/v1/threads/${thread_id}/messages`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${API_Key}`,
-                "OpenAI-Beta": "assistants=v2",
-              },
-            }
-          );
+          try {
+            const messageResponse = await fetch(
+              `https://api.openai.com/v1/threads/${thread_id}/messages`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${API_Key}`,
+                  "OpenAI-Beta": "assistants=v2",
+                },
+              }
+            );
 
-          const msgData = await messageResponse.json();
-
-          // Pick latest assistant reply
-          const assistantMsg = msgData.data.find(
-            (msg) => msg.role === "assistant"
-          );
-
-          if (assistantMsg?.content[0]?.text?.value) {
-            const reply = assistantMsg.content[0].text.value;
-
-            // show in UI
-            setResponse((prev) => [
-              ...prev,
-              { role: "assistant", content: reply },
-            ]);
-
-            //  save assistant reply in Firestore
-            if (chatDocId && user) {
-              await addDoc(
-                collection(db, "usershistory", chatDocId, "messages"),
-                {
-                  role: "assistant",
-                  content: reply,
-                  createdAt: serverTimestamp(),
-                }
+            if (!messageResponse.ok) {
+              throw new Error(
+                `Failed to fetch messages: ${messageResponse.status}`
               );
             }
+
+            const msgData = await messageResponse.json();
+
+            // Pick latest assistant reply
+            const assistantMsg = msgData.data.find(
+              (msg) => msg.role === "assistant"
+            );
+
+            if (assistantMsg?.content[0]?.text?.value) {
+              const reply = assistantMsg.content[0].text.value;
+
+              // show in UI
+              setResponse((prev) => [
+                ...prev,
+                { role: "assistant", content: reply },
+              ]);
+
+              //  save assistant reply in Firestore
+              if (currentChatDocId && user) {
+                try {
+                  const assistantMessageData = {
+                    role: "assistant",
+                    content: reply,
+                    createdAt: serverTimestamp(),
+                  };
+
+                  await addDoc(
+                    collection(
+                      db,
+                      "usershistory",
+                      currentChatDocId,
+                      "messages"
+                    ),
+                    assistantMessageData
+                  );
+                } catch (err) {
+                  console.error(
+                    "Error saving assistant reply to Firestore:",
+                    err
+                  );
+                }
+              }
+            } else {
+              console.warn(
+                "No assistant response content found in:",
+                assistantMsg
+              );
+              throw new Error("No assistant response found");
+            }
+          } catch (fetchError) {
+            console.error("Error fetching messages:", fetchError);
+            throw new Error(
+              "Failed to retrieve the assistant's response. Please try again."
+            );
           }
         }
 
@@ -204,14 +309,32 @@ const ThreadApi = forwardRef(
         setData("");
       } catch (error) {
         console.log("Fetching error", error);
+        // Show error in UI
+        setResponse((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Sorry, I encountered an error. Please try again.",
+          },
+        ]);
         return error;
+      } finally {
+        setisLoading(false);
       }
     };
 
     // Expose CallOpenAI to parent
     useImperativeHandle(ref, () => ({
       CallOpenAI,
-      ClearInput:()=>setData("")
+      ClearInput: () => setData(""),
+      ResetConversation: () => {
+        setThreadId(null);
+        setChatDocId(null);
+        setFile([]);
+        setData("");
+        setIsConversationStarted(false);
+        setResponse([]);
+      },
     }));
 
     return (
@@ -259,29 +382,31 @@ const ThreadApi = forwardRef(
                   <img className="h-7" src="./assets/attachment.png" alt="" />
                 </label>
 
-                <span className=" text-gray-500 font-semibold">Add Attachment</span>
+                <span className=" text-gray-500 font-semibold">
+                  Add Attachment
+                </span>
               </div>
               <div className="bg-[#593EBD] w-9 h-9 rounded-[10px] mb-2">
-              <button
-                onClick={() => CallOpenAI()}
-                className="rounded-lg pl-[9px] pt-1 text-white hover:text-gray-400 cursor-pointer transition-colors items-center"
-                type="button"
-              >
-                <svg
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  height={26}
-                  width={16}
-                  xmlns="http://www.w3.org/2000/svg"
+                <button
+                  onClick={() => CallOpenAI()}
+                  className="rounded-lg pl-[9px] pt-1 text-white hover:text-gray-400 cursor-pointer transition-colors items-center"
+                  type="button"
                 >
-                  <path d="m22 2-7 20-4-9-9-4Z" />
-                  <path d="M22 2 11 13" />
-                </svg>
-              </button>
+                  <svg
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    height={26}
+                    width={16}
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="m22 2-7 20-4-9-9-4Z" />
+                    <path d="M22 2 11 13" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -292,4 +417,3 @@ const ThreadApi = forwardRef(
 );
 
 export default ThreadApi;
-

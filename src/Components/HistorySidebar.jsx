@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebaseConfig";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Link } from "react-router-dom";
 
 export default function HistorySidebar() {
   const [history, setHistory] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Track the logged-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user ? user.uid : "No user");
       setCurrentUser(user);
     });
     return unsubscribe;
@@ -18,41 +20,87 @@ export default function HistorySidebar() {
 
   //  Fetch chat history for that user
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+
     const fetchHistory = async () => {
       try {
+        console.log("Fetching history for user:", currentUser.uid);
+
         const q = query(
           collection(db, "usershistory"),
-          where("userId", "==", currentUser.uid)
+          where("userId", "==", currentUser.uid),
+          orderBy("createdAt", "desc")
         );
+
         const snap = await getDocs(q);
-        setHistory(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        const historyData = snap.docs.map((doc) => {
+          const data = doc.data();
+          console.log("History item:", { id: doc.id, ...data });
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+          };
+        });
+
+        console.log("Total history items:", historyData.length);
+        setHistory(historyData);
       } catch (error) {
         console.error("Error fetching history:", error);
+        // Try without ordering as fallback
+        try {
+          const q = query(
+            collection(db, "usershistory"),
+            where("userId", "==", currentUser.uid)
+          );
+          const snap = await getDocs(q);
+          const historyData = snap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt
+              ? doc.data().createdAt.toDate()
+              : new Date(),
+          }));
+          setHistory(historyData);
+        } catch (fallbackError) {
+          console.error("Fallback error fetching history:", fallbackError);
+          setHistory([]);
+        }
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchHistory();
   }, [currentUser]);
 
+  if (loading) {
+    return (
+      <div className="space-y-2 w-64 border-r border-gray-200">
+        <p className="text-gray-500 text-sm">Loading history...</p>
+      </div>
+    );
+  }
+
   return (
-    
     <div className="space-y-2 w-64 border-r border-gray-200">
-      <h2 className="font-bold text-lg mb-2"></h2>
       {history.length === 0 ? (
-        <p className=" text-gray-500 text-sm">No chats yet</p>
+        <p className="text-gray-500 text-sm">No chats yet</p>
       ) : (
         history.map((chat) => (
           <Link
             key={chat.id}
             to={`/app/history/${chat.id}`}
-            className=" text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
+            className="text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
             title={chat.title || "Untitled Chat"} // Hover shows full text
           >
             {chat.title || "Untitled Chat"}
           </Link>
         ))
       )}
-    
     </div>
   );
 }

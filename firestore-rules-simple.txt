@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to read and write their own chat documents
+    match /usershistory/{chatId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      
+      // Allow users to read and write messages in their own chat subcollections
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && 
+          get(/databases/$(database)/documents/usershistory/$(chatId)).data.userId == request.auth.uid;
+        allow create: if request.auth != null && 
+          get(/databases/$(database)/documents/usershistory/$(chatId)).data.userId == request.auth.uid;
+      }
+    }
+  }
+}

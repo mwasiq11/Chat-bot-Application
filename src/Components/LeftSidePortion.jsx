@@ -15,19 +15,19 @@ export function LeftSidePortion({ onClose }) {
       {/* Logo */}
       <div className="flex flex-row items-center gap-2">
         <a href="/app">
-        <img
-          className="w-[2.4rem] h-auto"
-          src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
-          alt="logo"
-        />
+          <img
+            className="w-[2.4rem] h-auto"
+            src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent.png"
+            alt="logo"
+          />
         </a>
         <a href="/app">
-        <h1
-          className="text-[1.8rem] font-bold tracking-tight
+          <h1
+            className="text-[1.8rem] font-bold tracking-tight
           bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] bg-clip-text text-transparent"
-        >
-          BotRix
-        </h1>
+          >
+            BotRix
+          </h1>
         </a>
       </div>
 

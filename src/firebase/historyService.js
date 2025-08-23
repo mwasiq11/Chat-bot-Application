@@ -9,7 +9,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig"
+import { db } from "../firebase/firebaseConfig";
 import { getAuth } from "firebase/auth";
 
 const PAGE_SIZE = 20;
@@ -25,8 +25,8 @@ export const saveChatHistory = async (title = "New Chat") => {
       title,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-       // start empty, append later
-      messages: [], 
+      // start empty, append later
+      messages: [],
       favorite: false,
     });
 
@@ -43,7 +43,7 @@ export const fetchInitialHistory = async () => {
   if (!user) return { chats: [], lastDoc: null };
 
   const q = query(
-    collection(db, "usershistory"), 
+    collection(db, "usershistory"),
     where("userId", "==", user.uid),
     orderBy("createdAt", "desc"),
     limit(PAGE_SIZE)
@@ -66,7 +66,7 @@ export const fetchMoreHistory = async (lastDoc) => {
   if (!user || !lastDoc) return { chats: [], lastDoc: null };
 
   const q = query(
-    collection(db, "usershistory"), 
+    collection(db, "usershistory"),
     where("userId", "==", user.uid),
     orderBy("createdAt", "desc"),
     startAfter(lastDoc),

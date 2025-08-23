@@ -1,6 +1,6 @@
 import React from "react";
 
-function FeatureCard({ onCardClick,onRefresh}) {
+function FeatureCard({ onCardClick, onRefresh }) {
   return (
     <div className="grid gap-6 ml-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-10">
       <div
@@ -118,11 +118,19 @@ function FeatureCard({ onCardClick,onRefresh}) {
       {/*Refresh icon */}
       <div className="flex flex-row">
         <a href="">
-        <button  onClick={()=>onRefresh()}
-        className="flex items-center cursor-pointer">
-          <img className="h-5 w-auto ml-4 mt-2" src="./assets/refresh.png" alt="refresh-icon" />
-          <p className="text-md text-gray-500 font-semibold leading-snug mt-2 ml-2">Refresh Prompts</p>
-        </button>
+          <button
+            onClick={() => onRefresh()}
+            className="flex items-center cursor-pointer"
+          >
+            <img
+              className="h-5 w-auto ml-4 mt-2"
+              src="./assets/refresh.png"
+              alt="refresh-icon"
+            />
+            <p className="text-md text-gray-500 font-semibold leading-snug mt-2 ml-2">
+              Refresh Prompts
+            </p>
+          </button>
         </a>
       </div>
     </div>

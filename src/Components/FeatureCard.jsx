@@ -1,13 +1,13 @@
 import React from "react";
 
-
-function FeatureCard({onCardClick}) {
- 
+function FeatureCard({ onCardClick,onRefresh}) {
   return (
     <div className="grid gap-6 ml-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-10">
-      <div onClick={()=>onCardClick("Write to-do list for personal project or task?")}
-        
-           className="
+      <div
+        onClick={() =>
+          onCardClick("Write to-do list for personal project or task?")
+        }
+        className="
                        flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/90 backdrop-blur-lg
@@ -31,7 +31,8 @@ function FeatureCard({onCardClick}) {
           />
         </div>
       </div>
-      <div onClick={()=>onCardClick("Generate a email to reply to a job offer?")}
+      <div
+        onClick={() => onCardClick("Generate a email to reply to a job offer?")}
         className="
             flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
@@ -56,7 +57,10 @@ function FeatureCard({onCardClick}) {
           />
         </div>
       </div>
-      <div onClick={()=>onCardClick("Summarize this article or text for me in one paragraph?")}
+      <div
+        onClick={() =>
+          onCardClick("Summarize this article or text for me in one paragraph?")
+        }
         className="
             flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
@@ -81,7 +85,12 @@ function FeatureCard({onCardClick}) {
           />
         </div>
       </div>
-      <div onClick={()=>onCardClick("How does AI helps programmers to understand complex data structures?")}
+      <div
+        onClick={() =>
+          onCardClick(
+            "How does AI helps programmers to understand complex data structures?"
+          )
+        }
         className="
             flex flex-col justify-between
             h-[9rem] 
@@ -105,6 +114,16 @@ function FeatureCard({onCardClick}) {
             alt="data-structure-icon"
           />
         </div>
+      </div>
+      {/*Refresh icon */}
+      <div className="flex flex-row">
+        <a href="">
+        <button  onClick={()=>onRefresh()}
+        className="flex items-center cursor-pointer">
+          <img className="h-5 w-auto ml-4 mt-2" src="./assets/refresh.png" alt="refresh-icon" />
+          <p className="text-md text-gray-500 font-semibold leading-snug mt-2 ml-2">Refresh Prompts</p>
+        </button>
+        </a>
       </div>
     </div>
   );

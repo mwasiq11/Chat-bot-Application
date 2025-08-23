@@ -43,9 +43,9 @@ function App() {
                     <Outlet />
                     <FeatureCard
                       onCardClick={(text) =>
-                        threadApiRef.current.CallOpenAI(text)
-                      }
-                      response={response}
+                        threadApiRef.current.CallOpenAI(text)}
+                        response={response}
+                        onRefresh={() => threadApiRef.current.ClearInput()}
                     />
                   </>
                 ) : (

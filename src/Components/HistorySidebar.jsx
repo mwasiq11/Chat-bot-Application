@@ -37,15 +37,15 @@ export default function HistorySidebar() {
   return (
     
     <div className="space-y-2 w-64 border-r border-gray-200">
-      <h2 className="font-bold text-lg mb-4"></h2>
+      <h2 className="font-bold text-lg mb-2"></h2>
       {history.length === 0 ? (
-        <p className="text-gray-500 text-sm">No chats yet</p>
+        <p className=" text-gray-500 text-sm">No chats yet</p>
       ) : (
         history.map((chat) => (
           <Link
             key={chat.id}
             to={`/app/history/${chat.id}`}
-            className="text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
+            className=" text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
             title={chat.title || "Untitled Chat"} // Hover shows full text
           >
             {chat.title || "Untitled Chat"}

@@ -211,18 +211,19 @@ const ThreadApi = forwardRef(
     // Expose CallOpenAI to parent
     useImperativeHandle(ref, () => ({
       CallOpenAI,
+      ClearInput:()=>setData("")
     }));
 
     return (
-      <div className="w-full py-4">
+      <div className="w-full py-4 mb-1">
         <div className="relative  w-full mx-auto">
           <div className="relative flex flex-col bg-black/5 outline-none border-none">
             <textarea
               onChange={(e) => setData(e.target.value)}
               value={data}
               onKeyDown={handlekeyDown}
-              className="w-full min-h-[90px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 bg-[#FFFFFF] text-gray-500 placeholder:text-[#404040] border-0 outline-none resize-none focus:ring-0 focus:outline-none"
-              placeholder="Ask anything"
+              className="w-full min-h-[95px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 bg-[#FFFFFF] text-gray-500 placeholder:text-gray-600 border-0 outline-none resize-none focus:ring-0 focus:outline-none"
+              placeholder="Ask whatever you want..."
               id="ai-input"
             />
 
@@ -248,35 +249,22 @@ const ThreadApi = forwardRef(
 
             <div className="h-12 bg-white rounded-b-xl flex justify-between items-center px-3">
               <div className="flex items-center gap-2">
-                <label className="cursor-pointer rounded-lg p-2 bg-[#c3c5c1] hover:bg-gray">
+                <label className="cursor-pointer rounded-lg  ">
                   <input
                     className="hidden"
                     onChange={handleFile}
                     ref={inputFileRef}
                     type="file"
                   />
-                  <svg
-                    className="text-gray-800 hover:text-white transition-colors"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    height={16}
-                    width={16}
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                  </svg>
+                  <img className="h-7" src="./assets/attachment.png" alt="" />
                 </label>
 
-                <span className="text-sm text-gray-500">Add Attachment</span>
+                <span className=" text-gray-500 font-semibold">Add Attachment</span>
               </div>
-
+              <div className="bg-[#593EBD] w-9 h-9 rounded-[10px] mb-2">
               <button
                 onClick={() => CallOpenAI()}
-                className="rounded-lg p-2 hover:bg-white/10 text-gray-950 hover:text-gray-700 cursor-pointer transition-colors"
+                className="rounded-lg pl-[9px] pt-1 text-white hover:text-gray-400 cursor-pointer transition-colors items-center"
                 type="button"
               >
                 <svg
@@ -294,6 +282,7 @@ const ThreadApi = forwardRef(
                   <path d="M22 2 11 13" />
                 </svg>
               </button>
+              </div>
             </div>
           </div>
         </div>

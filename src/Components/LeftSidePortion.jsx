@@ -4,7 +4,7 @@ import HistorySidebar from "./HistorySidebar";
 
 export function LeftSidePortion({ onClose }) {
   return (
-    <div className="flex flex-col bg-[#edf0f3] rounded-t-[1rem] rounded-b-[1rem] backdrop-blur-lg border-2 border-gray-200 p-5 h-screen w-64">
+    <div className="flex flex-col bg-[#edf0f3] rounded-t-[1rem] rounded-b-[1rem] backdrop-blur-lg border-2 border-gray-200 p-5 h-screen w-64 ">
       {/* Close button for mobile */}
       <div className="sm:hidden flex justify-end">
         <button onClick={onClose} className="text-gray-500 text-xl">

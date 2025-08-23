@@ -1,7 +1,7 @@
 import React from "react";
 
 function MainContent() {
-  return (
+  return ( 
     <div className="flex flex-col items-center lg:mt-12 sm:mt-2 ">
       <h1 className="text-2xl sm:text-3xl md:text-[48px] leading-tight font-semibold">
         <span>Welcome to </span>

@@ -28,7 +28,7 @@ export default function SidebarToggle() {
       {/* Mobile menu button (top-left) */}
       <button
         onClick={() => setIsOpen(true)}
-        className="p-3 text-2xl text-green-500 sm:hidden absolute top-3 left-3 z-50"
+        className="p-3 text-2xl text-gray-600 sm:hidden absolute top-3 left-3 z-50"
       >
         <FaBars />
       </button>

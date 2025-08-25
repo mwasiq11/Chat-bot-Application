@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebaseConfig";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function HistorySidebar() {
   const [history, setHistory] = useState([]);
@@ -91,16 +91,25 @@ export default function HistorySidebar() {
         <p className="text-gray-500 text-sm">No chats yet</p>
       ) : (
         history.map((chat) => (
-          <Link
-            key={chat.id}
-            to={`/app/history/${chat.id}`}
-            className="text-gray-700 block p-2 rounded hover:bg-gray-200 truncate"
-            title={chat.title || "Untitled Chat"} // Hover shows full text
-          >
-            {chat.title || "Untitled Chat"}
-          </Link>
-        ))
-      )}
-    </div>
-  );
+          
+<NavLink
+  key={chat.id}
+  to={`/app/history/${chat.id}`}
+  title={chat.title || "Untitled Chat"}
+  className={({ isActive }) =>
+    `block py-2 px-3 text-[16px] truncate rounded-xl cursor-pointer
+     transition-colors duration-150 ease-out 
+     ${isActive
+        ? "bg-gray-200 text-gray-700 font-semibold shadow-sm"
+        : "text-gray-700 hover:bg-gray-100"}
+     active:scale-95 active:duration-100`
+  }
+>
+  {chat.title || "Untitled chat"}
+</NavLink>
+))
+
+)}
+</div>
+);
 }

@@ -283,10 +283,10 @@ const ThreadApi = forwardRef(
                     ),
                     assistantMessageData
                   );
-                } catch (err) {
+                } catch (error) {
                   console.error(
                     "Error saving assistant reply to Firestore:",
-                    err
+                    error
                   );
                 }
               }

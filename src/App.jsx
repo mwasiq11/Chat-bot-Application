@@ -9,6 +9,7 @@ import HistoryPage from "./Components/HistoryPage";
 import { LeftSidePortion } from "./Components/LeftSidePortion";
 import Loader from "./Components/Loader";
 import PageNotFound from "./Components/PageNotFound";
+import Logout from "./Components/Logout";
 function App() {
   const [response, setResponse] = useState([]);
   const [isConversationStarted, setIsConversationStarted] = useState(false);
@@ -24,6 +25,10 @@ function App() {
     <div className="flex h-screen w-screen bg-[#F8FAFB] overflow-hidden">
       {/* Sidebar Toggle (for mobile) */}
       <SidebarToggle response={response} />
+
+      <div className="absolute top-4 right-4">
+        <Logout />
+      </div>
 
       {/* Left Sidebar */}
       <div className="hidden sm:block w-64 h-screen">

@@ -5,6 +5,7 @@ import { createBrowserRouter, Route } from "react-router-dom";
 import AuthForm from "./forms/Form.jsx";
 import { RouterProvider, createRoutesFromElements } from "react-router-dom";
 import HistoryPage from "./Components/HistoryPage.jsx";
+import PageNotFound from "./Components/PageNotFound.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route path="/app/*" element={<App />}>
         <Route path="history/:id" element={<HistoryPage />} />
       </Route>
+      <Route path="*" element={<PageNotFound/>}/>
     </>
   )
 );

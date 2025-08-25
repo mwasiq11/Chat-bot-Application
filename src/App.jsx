@@ -8,6 +8,7 @@ import ThreadApi from "./Components/ThreadApi";
 import HistoryPage from "./Components/HistoryPage";
 import { LeftSidePortion } from "./Components/LeftSidePortion";
 import Loader from "./Components/Loader";
+import PageNotFound from "./Components/PageNotFound";
 function App() {
   const [response, setResponse] = useState([]);
   const [isConversationStarted, setIsConversationStarted] = useState(false);
@@ -107,6 +108,7 @@ function App() {
           />
         </div>
       </div>
+      {/* <PageNotFound/> */}
     </div>
   );
 }

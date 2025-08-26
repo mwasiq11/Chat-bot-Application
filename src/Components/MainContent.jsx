@@ -2,10 +2,10 @@ import React from "react";
 
 function MainContent() {
   return ( 
-    <div className="flex flex-col items-center lg:mt-12 sm:mt-2 ">
+    <div className="flex flex-col items-center lg:mt-8 sm:mt-2 ">
       <h1 className="text-[16px] sm:text-3xl md:text-[48px] leading-tight font-semibold">
         <span>Welcome to </span>
-        <span className="bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-[#C94AFD] to-[rgb(79,119,255)] bg-clip-text text-transparent">
           BotRix
         </span>
         <br />

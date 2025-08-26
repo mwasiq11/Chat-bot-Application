@@ -8,7 +8,7 @@ function FeatureCard({ onCardClick, onRefresh }) {
           onCardClick("Write to-do list for personal project or task?")
         }
         className="
-                       flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
+                      flex flex-col justify-between shadow-[5px_5px_10px_#babace,_-5px_-5px_10px_#ffffff]
             h-[9rem] 
             bg-white/90 backdrop-blur-lg
             rounded-2xl text-black 

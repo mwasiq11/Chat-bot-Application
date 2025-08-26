@@ -98,7 +98,7 @@ export default function HistoryPage() {
   if (!chat) return <p className="p-4">No chat found.</p>;
 
   return (
-    <div className="p-4">
+    <div >
       <div className="space-y-3">
         {messages.map((msg) => (
           <div
@@ -108,7 +108,7 @@ export default function HistoryPage() {
             }`}
           >
             <div
-              className={`mt-4 px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow transition-all duration-300 ease-in-out ${
+              className={` mt-4 px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow transition-all duration-300 ease-in-out ${
                 msg.role === "user"
                   ? "bg-gradient-to-r from-[#C94AFD] to-[#4F77FF] text-white"
                   : "bg-white text-gray-700 border border-gray-200"

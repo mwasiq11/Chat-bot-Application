@@ -62,10 +62,8 @@ function App() {
                       <div
                         key={index}
                         className={`flex ${
-                          msg.role === "user"
-                            ? "justify-end"
-                            : "justify-start mt-5"
-                        }`}
+                          msg.role === "user" ? "justify-end" : "justify-start"
+                        } mt-4`}
                       >
                         <div
                           className={`px-4 py-2 rounded-2xl max-w-[70%] text-sm shadow 

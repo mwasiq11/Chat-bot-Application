@@ -26,7 +26,7 @@ function App() {
       {/* Sidebar Toggle (for mobile) */}
       <SidebarToggle response={response} />
 
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-2 right-2">
         <Logout />
       </div>
 
@@ -38,7 +38,7 @@ function App() {
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 px-4 sm:pl-6 py-6 gap-4">
         {/* Scrollable message container */}
-        <div className="flex-1 overflow-y-auto pr-2">
+        <div className="flex-1 overflow-auto hide-scrollbar pr-2 mt-8 ">
           <Routes>
             {/* Default new session */}
             <Route
@@ -48,7 +48,7 @@ function App() {
                   <>
                     <MainContent response={response} />
                     <Outlet />
-                    <FeatureCard
+                    <FeatureCard 
                       onCardClick={(text) =>
                         threadApiRef.current.CallOpenAI(text)
                       }
@@ -95,9 +95,11 @@ function App() {
                 )
               }
             />
-
+             
             {/* History page (specific conversation) */}
-            <Route path="/history/:id" element={<HistoryPage />} />
+            <Route path="/history/:id" element={<HistoryPage/>} />
+
+            
           </Routes>
         </div>
 

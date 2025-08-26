@@ -7,17 +7,43 @@ const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
 const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
 
 const ThreadApi = forwardRef(
-  ({ setResponse, setIsConversationStarted, setisLoading }, ref) => {
+  ({ setResponse, setIsConversationStarted, isLoading, setisLoading }, ref) => {
     const [data, setData] = useState("");
     const [threadId, setThreadId] = useState();
     //track Firestore doc
     const [chatDocId, setChatDocId] = useState(null);
     const [files, setFile] = useState([]);
+    const [pendingMessage, setPendingMessage] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
     const inputFileRef = useRef(null);
 
     const handlekeyDown = (event) => {
       if (event.key === "Enter") {
-        event.preventDefault();
+        if (event.shiftKey) {
+          return;
+        }
+        else{
+          event.preventDefault();
+          handleSendMessage();
+        }
+      }
+    };
+
+    const handleSendMessage = () => {
+      if (!data.trim()) return;
+      
+      if (isLoading || isProcessing) {
+        // If already loading or processing, queue this message
+        setPendingMessage({
+          text: data,
+          files: [...files]
+        });
+        setData("");
+        setFile([]);
+      } else {
+        // Send immediately if not loading
+        setIsProcessing(true);
+        setisLoading(true);
         CallOpenAI();
       }
     };
@@ -38,7 +64,12 @@ const ThreadApi = forwardRef(
     const CallOpenAI = async (inputText) => {
       const prompt = inputText || data;
       if (!prompt.trim()) return;
-      setisLoading(true);
+      
+      // Set loading state if not already set
+      if (!isLoading) {
+        setisLoading(true);
+      }
+      setIsProcessing(true);
 
       // Get current user and ensure they are properly authenticated
       const user = getAuth().currentUser;
@@ -320,6 +351,24 @@ const ThreadApi = forwardRef(
         return error;
       } finally {
         setisLoading(false);
+        setIsProcessing(false);
+        
+        // Check if there's a pending message and execute it
+        // Only execute if there's no new message in the input
+        if (pendingMessage && !data.trim()) {
+          const { text, files: pendingFiles } = pendingMessage;
+          setPendingMessage(null);
+          setData(text);
+          setFile(pendingFiles);
+          
+          // Execute the pending message after a short delay
+          setTimeout(() => {
+            CallOpenAI(text);
+          }, 100);
+        } else if (pendingMessage && data.trim()) {
+          // If there's a new message in input, clear the pending message
+          setPendingMessage(null);
+        }
       }
     };
 
@@ -332,6 +381,8 @@ const ThreadApi = forwardRef(
         setChatDocId(null);
         setFile([]);
         setData("");
+        setPendingMessage(null);
+        setIsProcessing(false);
         setIsConversationStarted(false);
         setResponse([]);
       },
@@ -345,7 +396,9 @@ const ThreadApi = forwardRef(
               onChange={(e) => setData(e.target.value)}
               value={data}
               onKeyDown={handlekeyDown}
-              className="w-full min-h-[95px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 bg-[#FFFFFF] text-gray-500 placeholder:text-gray-600 border-0 outline-none resize-none focus:ring-0 focus:outline-none"
+              className={`w-full min-h-[95px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 
+                    bg-[#FFFFFF] text-gray-500 placeholder:text-gray-600 border-0 outline-none resize-none 
+                      focus:ring-0 focus:outline-none`}
               placeholder="Ask whatever you want..."
               id="ai-input"
             />
@@ -388,8 +441,14 @@ const ThreadApi = forwardRef(
               </div>
               <div className="bg-[#593EBD] w-9 h-9 rounded-[10px] mb-2">
                 <button
-                  onClick={() => CallOpenAI()}
-                  className="rounded-lg pl-[9px] pt-1 text-white hover:text-gray-400 cursor-pointer transition-colors items-center"
+                  onClick={handleSendMessage}
+                  disabled={isLoading || isProcessing}
+                  className={`rounded-lg pl-[9px] pt-1 text-white cursor-pointer transition-colors items-center
+                 ${
+                   isLoading || isProcessing
+                     ? "opacity-50 cursor-not-allowed"
+                     : "hover:text-gray-400"
+                 }`}
                   type="button"
                 >
                   <svg

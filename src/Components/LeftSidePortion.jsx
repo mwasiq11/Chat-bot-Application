@@ -37,7 +37,7 @@ export function LeftSidePortion({ onClose }) {
 
       {/* Scrollable history list */}
       <div className="flex-1 overflow-y-auto hide-scrollbar">
-        <HistorySidebar />
+        <HistorySidebar onClose={onClose} />
       </div>
     </div>
   );

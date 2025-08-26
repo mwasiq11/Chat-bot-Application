@@ -4,7 +4,7 @@ import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { NavLink } from "react-router-dom";
 
-export default function HistorySidebar() {
+export default function HistorySidebar({onClose}) {
   const [history, setHistory] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,6 +96,10 @@ export default function HistorySidebar() {
   key={chat.id}
   to={`/app/history/${chat.id}`}
   title={chat.title || "Untitled Chat"}
+  onClick={()=>{
+    if(onClose) onClose()
+  }}
+  
   className={({ isActive }) =>
     `block py-2 px-3 text-[16px] truncate rounded-xl cursor-pointer
      transition-colors duration-150 ease-out 

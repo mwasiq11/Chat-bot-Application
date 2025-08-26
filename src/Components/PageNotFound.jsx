@@ -4,7 +4,7 @@ function PageNotFound() {
   return (
     <div className="flex items-center justify-center h-screen ">
       <div className="flex flex-col items-center ">
-        <img className="h-20 w-20 mb-4" src="./assets/lock.png" alt="lock-logo" />
+        <img className="h-20 w-20 mb-4" src="/assets/lock.png" alt="lock-logo" />
 
         <h1 className="text-2xl font-semibold text-gray-700">
           This content isn't available at the moment

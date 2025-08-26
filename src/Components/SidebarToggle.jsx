@@ -36,9 +36,8 @@ export default function SidebarToggle() {
       {/* Sidebar */}
       {isOpen && (
         <>
-          {/* Dark background overlay for mobile */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-40 sm:hidden"
+            className="fixed inset-0 bg-white bg-opacity-40 sm:hidden"
             onClick={() => setIsOpen(false)}
           ></div>
 

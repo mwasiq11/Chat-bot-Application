@@ -1,5 +1,6 @@
-<img width="1440" height="739" alt="Capture" src="https://github.com/user-attachments/assets/8502827a-0127-4c74-8ad4-4a4e8e35b9b8" />
 <img width="1439" height="738" alt="form" src="https://github.com/user-attachments/assets/f054f8e6-a193-477c-ae9a-37904f1a5e34" />
+<img width="1440" height="739" alt="Capture" src="https://github.com/user-attachments/assets/8502827a-0127-4c74-8ad4-4a4e8e35b9b8" />
+
 
 🤖 Botrix – AI Chatbot Application
 
@@ -30,6 +31,7 @@ Authentication: Firebase Auth
 AI Engine: OpenAI LLM Thread API
 
 📂 Project Structure
+
 ├── src/
 │   ├── components/     # Reusable UI components
 │   ├── pages/          # App pages (Login, Chat, History, etc.)

@@ -79,4 +79,5 @@ Each user’s chats are saved under their unique UID
 Conversations are persisted in Firestore for history access
 
 🤝 Contribution
+
 Contributions are welcome! Fork this repo and submit a PR with improvements.

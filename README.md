@@ -14,6 +14,10 @@ Botrix is a full-stack AI chatbot built with React, Tailwind CSS, Firebase, and 
 
 💬 Chat History → Saves prompts & responses in Firestore
 
+🃏 Quick Prompt Cards – Suggests common and frequently used prompts
+
+📁 File Attachments – Add attachments in your chat flow
+
 🔄 Threaded Conversations → Continue previous discussions seamlessly
 
 🎨 Modern UI → Responsive and elegant interface with React + Tailwind CSS
@@ -29,6 +33,16 @@ Backend/Database: Firebase Firestore
 Authentication: Firebase Auth
 
 AI Engine: OpenAI LLM Thread API
+
+🏠 Dashboard with Prompt Cards
+
+💬 Chat Interface
+
+Persistent history sidebar
+
+Smart AI responses
+
+File attachments support
 
 📂 Project Structure
 

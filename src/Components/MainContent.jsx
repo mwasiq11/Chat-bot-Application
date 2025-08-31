@@ -9,8 +9,8 @@ function MainContent() {
           font-semibold 
           leading-[1.15] 
           tracking-tight 
-          text-[clamp(1.6rem,5vw,3.5rem)]
-          sm:text-[clamp(2rem,4.5vw,3.6rem)]
+          text-[clamp(2rem,5vw,3.5rem)]
+          sm:text-[clamp(2.5rem,4.5vw,3.6rem)]
         "
       >
         <span>Welcome to </span>

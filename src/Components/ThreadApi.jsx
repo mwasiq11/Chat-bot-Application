@@ -251,7 +251,7 @@ const ThreadApi = forwardRef(
             }
 
             attempts++;
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 100));
           } catch (pollError) {
             console.error("Error polling run status:", pollError);
             throw new Error(
@@ -390,7 +390,7 @@ const ThreadApi = forwardRef(
 
     return (
       <div className="w-full py-4 mb-1">
-        <div className="relative  w-full mx-auto">
+        <div className="relative w-full mx-auto">
           <div className="relative flex flex-col bg-black/5 outline-none border-none">
             <textarea
               onChange={(e) => setData(e.target.value)}
@@ -476,3 +476,5 @@ const ThreadApi = forwardRef(
 );
 
 export default ThreadApi;
+
+

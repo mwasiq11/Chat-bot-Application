@@ -57,8 +57,9 @@ File attachments support
 └── README.md
 
 ⚡ Getting Started
+
 1. Clone the Repository
-git clone https:github.com/mwasiq11/Chat-bot-Application/tree/main
+git clone [https:github.com/mwasiq11/Chat-bot-Application/tree/main](https://github.com/mwasiq11/Chat-bot-Application)
 cd botrix
 
 2. Install Dependencies

@@ -37,7 +37,7 @@ export const saveChatHistory = async (title = "New Chat") => {
   }
 };
 
-//  Step 1: Fetch first page
+// Fetch first page
 export const fetchInitialHistory = async () => {
   const user = getAuth().currentUser;
   if (!user) return { chats: [], lastDoc: null };

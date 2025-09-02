@@ -2,12 +2,24 @@ import { forwardRef, useImperativeHandle, useState, useRef } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { getAuth } from "firebase/auth";
+import {openAiService} from "../firebase/openAiService"
+import Fileservice from "../firebase/fileservice";
 
 const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
 const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
 
 const ThreadApi = forwardRef(
-  ({ setResponse, setIsConversationStarted, isLoading, setisLoading }, ref) => {
+  (
+    {
+      setResponse,
+      setIsConversationStarted,
+      isLoading,
+      setisLoading,
+      Fileservice,
+      UploadedUrls,
+    },
+    ref
+  ) => {
     const [data, setData] = useState("");
     const [threadId, setThreadId] = useState();
     //track Firestore doc
@@ -21,22 +33,21 @@ const ThreadApi = forwardRef(
       if (event.key === "Enter") {
         if (event.shiftKey) {
           return;
-        }
-        else{
+        } else {
           event.preventDefault();
           handleSendMessage();
         }
       }
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
       if (!data.trim()) return;
-      
+
       if (isLoading || isProcessing) {
         // If already loading or processing, queue this message
         setPendingMessage({
           text: data,
-          files: [...files]
+          files: [...files],
         });
         setData("");
         setFile([]);
@@ -44,7 +55,14 @@ const ThreadApi = forwardRef(
         // Send immediately if not loading
         setIsProcessing(true);
         setisLoading(true);
-        CallOpenAI();
+
+        // Upload files first
+        const UploadedUrls = [];
+        for (const file of files) {
+          const url = await Fileservice(file);
+          UploadedUrls.push(url);
+        }
+        CallOpenAI(data, UploadedUrls);
       }
     };
 
@@ -64,7 +82,7 @@ const ThreadApi = forwardRef(
     const CallOpenAI = async (inputText) => {
       const prompt = inputText || data;
       if (!prompt.trim()) return;
-      
+
       // Set loading state if not already set
       if (!isLoading) {
         setisLoading(true);
@@ -164,27 +182,29 @@ const ThreadApi = forwardRef(
 
         // Send user message to OpenAI
         try {
-          const messageResponse = await fetch(
-            `https://api.openai.com/v1/threads/${thread_id}/messages`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${API_Key}`,
-                "OpenAI-Beta": "assistants=v2",
-              },
-              body: JSON.stringify({
-                role: "user",
-                content: prompt,
-              }),
-            }
-          );
+          // const messageResponse = await fetch(
+          //   `https://api.openai.com/v1/threads/${thread_id}/messages`,
+          //   {
+          //     method: "POST",
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //       Authorization: `Bearer ${API_Key}`,
+          //       "OpenAI-Beta": "assistants=v2",
+          //     },
+          //     body: JSON.stringify({
+          //       role: "user",
+          //       content: prompt,
+          //     }),
+          //   }
+          // );
 
-          if (!messageResponse.ok) {
-            throw new Error(
-              `Failed to send message: ${messageResponse.status}`
-            );
-          }
+          // if (!messageResponse.ok) {
+          //   throw new Error(
+          //     `Failed to send message: ${messageResponse.status}`
+          //   );
+          // }
+
+          await openAiService(thread_id, prompt, UploadedUrls);
         } catch (messageError) {
           console.error("Error sending message:", messageError);
           throw new Error("Failed to send your message. Please try again.");
@@ -352,7 +372,7 @@ const ThreadApi = forwardRef(
       } finally {
         setisLoading(false);
         setIsProcessing(false);
-        
+
         // Check if there's a pending message and execute it
         // Only execute if there's no new message in the input
         if (pendingMessage && !data.trim()) {
@@ -360,7 +380,7 @@ const ThreadApi = forwardRef(
           setPendingMessage(null);
           setData(text);
           setFile(pendingFiles);
-          
+
           // Execute the pending message after a short delay
           setTimeout(() => {
             CallOpenAI(text);
@@ -476,5 +496,3 @@ const ThreadApi = forwardRef(
 );
 
 export default ThreadApi;
-
-

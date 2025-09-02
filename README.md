@@ -1,5 +1,7 @@
 <img width="1439" height="738" alt="form" src="https://github.com/user-attachments/assets/f054f8e6-a193-477c-ae9a-37904f1a5e34" />
-<img width="1440" height="739" alt="Capture" src="https://github.com/user-attachments/assets/8502827a-0127-4c74-8ad4-4a4e8e35b9b8" />
+<img width="1440" height="739" alt="main-page" src="https://github.com/user-attachments/assets/8502827a-0127-4c74-8ad4-4a4e8e35b9b8" />
+<img width="1440" height="738" alt="response-page" src="https://github.com/user-attachments/assets/9a2d5812-49b8-468e-8c0f-64d08311bed7" />
+
 
 
 🤖 Botrix – AI Chatbot Application

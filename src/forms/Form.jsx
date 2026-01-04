@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
+import toast from "react-hot-toast";
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(false);
@@ -19,33 +20,38 @@ export default function AuthForm() {
 
   const onSubmit = async (data) => {
     try {
-      let userCredential;
-
       if (isLogin) {
         // Login user
-        userCredential = await signInWithEmailAndPassword(
+        await signInWithEmailAndPassword(
           auth,
           data.email,
           data.password
         );
-        console.log("User logged in:", userCredential.user);
+        toast.success("Signed in successfully!", {
+          position: "top-right",
+          duration: 3000,
+        });
       } else {
-        // 🔹 Sign up user
-        userCredential = await createUserWithEmailAndPassword(
+        //  Sign up user
+        await createUserWithEmailAndPassword(
           auth,
           data.email,
           data.password
         );
-        console.log("User signed up:", userCredential.user);
+        toast.success("Account created successfully!", {
+          position: "top-right",
+          duration: 3000,
+        });
       }
-
-      console.log(isLogin ? "Login Data:" : "Signup Data:", data);
 
       //  Navigate only if authentication succeeds
       navigate("/app");
     } catch (error) {
       console.error("Auth error:", error.message);
-      alert(error.message);
+      toast.error(error.message || "Authentication failed", {
+        position: "top-right",
+        duration: 4000,
+      });
     }
   };
 

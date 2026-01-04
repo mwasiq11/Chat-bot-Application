@@ -1,16 +1,18 @@
-
-
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Logout() {
     const navigate=useNavigate()
     const handleLogout = async () => {
         try {
       await signOut(auth);
-      navigate("/")
-      console.log("User signed out");
+      toast.success("Signed out successfully!", {
+        position: "top-right",
+        duration: 3000,
+      });
+      navigate("/");
       
     } catch (error) {
       console.error("Logout error:", error.message);

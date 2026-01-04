@@ -25,7 +25,7 @@ async function Fileservice(file) {
         // progress UI
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
+        // Upload progress: progress + "% done"
       },
       (error) => reject(error),
       async () => {

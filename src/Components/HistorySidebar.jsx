@@ -12,7 +12,6 @@ export default function HistorySidebar({onClose}) {
   // Track the logged-in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user ? user.uid : "No user");
       setCurrentUser(user);
     });
     return unsubscribe;
@@ -27,8 +26,6 @@ export default function HistorySidebar({onClose}) {
 
     const fetchHistory = async () => {
       try {
-        console.log("Fetching history for user:", currentUser.uid);
-
         const q = query(
           collection(db, "usershistory"),
           where("userId", "==", currentUser.uid),
@@ -38,7 +35,6 @@ export default function HistorySidebar({onClose}) {
         const snap = await getDocs(q);
         const historyData = snap.docs.map((doc) => {
           const data = doc.data();
-          console.log("History item:", { id: doc.id, ...data });
           return {
             id: doc.id,
             ...data,
@@ -46,7 +42,6 @@ export default function HistorySidebar({onClose}) {
           };
         });
 
-        console.log("Total history items:", historyData.length);
         setHistory(historyData);
       } catch (error) {
         console.error("Error fetching history:", error);

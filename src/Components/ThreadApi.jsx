@@ -4,6 +4,7 @@ import { db } from "../firebase/firebaseConfig";
 import { getAuth } from "firebase/auth";
 import {openAiService} from "../firebase/openAiService"
 import Fileservice from "../firebase/fileservice";
+import { analyzeFile, isFileSupported } from "../firebase/fileAnalysisService";
 
 const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
 const assistant_id = import.meta.env.VITE_ASSISSTENT_Id;
@@ -16,7 +17,7 @@ const ThreadApi = forwardRef(
       isLoading,
       setisLoading,
       Fileservice,
-      UploadedUrls,
+      
     },
     ref
   ) => {
@@ -25,8 +26,10 @@ const ThreadApi = forwardRef(
     //track Firestore doc
     const [chatDocId, setChatDocId] = useState(null);
     const [files, setFile] = useState([]);
+    const [_, setAnalyzedFiles] = useState([]);
     const [pendingMessage, setPendingMessage] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [fileAnalysisProgress, setFileAnalysisProgress] = useState('');
     const inputFileRef = useRef(null);
 
     const handlekeyDown = (event) => {
@@ -41,7 +44,7 @@ const ThreadApi = forwardRef(
     };
 
     const handleSendMessage = async () => {
-      if (!data.trim()) return;
+      if (!data.trim() && files.length === 0) return;
 
       if (isLoading || isProcessing) {
         // If already loading or processing, queue this message
@@ -51,37 +54,141 @@ const ThreadApi = forwardRef(
         });
         setData("");
         setFile([]);
+        setAnalyzedFiles([]);
       } else {
         // Send immediately if not loading
         setIsProcessing(true);
         setisLoading(true);
 
-        // Upload files first
-        const UploadedUrls = [];
-        for (const file of files) {
-          const url = await Fileservice(file);
-          UploadedUrls.push(url);
+        try {
+          // Analyze files first
+          setFileAnalysisProgress('Analyzing files...');
+          const analyzed = [];
+          const UploadedUrls = [];
+
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            setFileAnalysisProgress(`Analyzing file ${i + 1}/${files.length}: ${file.name}`);
+            
+            try {
+              // Analyze the file content
+              const fileData = await analyzeFile(file);
+              analyzed.push(fileData);
+
+              // Upload to Firebase for storage (optional, for history)
+              const url = await Fileservice(file);
+              if (fileData.type === 'image') {
+                UploadedUrls.push(url);
+              }
+            } catch (error) {
+              console.error(`Error processing file ${file.name}:`, error);
+              // Continue with other files
+            }
+          }
+
+          setFileAnalysisProgress('');
+          setAnalyzedFiles(analyzed);
+          CallOpenAI(data, UploadedUrls, analyzed);
+        } catch (error) {
+          console.error('Error in handleSendMessage:', error);
+          setFileAnalysisProgress('');
+          setIsProcessing(false);
+          setisLoading(false);
         }
-        CallOpenAI(data, UploadedUrls);
       }
     };
 
-    // Add file
+    // Add file with validation
     const handleFile = (event) => {
-      const selectedFile = Array.from(event.target.files);
-      if (selectedFile) {
-        setFile((prev) => [...prev, ...selectedFile]);
+      const selectedFiles = Array.from(event.target.files);
+      
+      // Validate files
+      const validFiles = [];
+      const invalidFiles = [];
+      
+      selectedFiles.forEach(file => {
+        if (isFileSupported(file)) {
+          validFiles.push(file);
+        } else {
+          invalidFiles.push(file.name);
+        }
+      });
+      
+      if (invalidFiles.length > 0) {
+        alert(`Unsupported file types: ${invalidFiles.join(', ')}\n\nSupported types: Text files, PDF, DOCX, Images (JPG, PNG, etc.)`);
+      }
+      
+      if (validFiles.length > 0) {
+        setFile((prev) => [...prev, ...validFiles]);
       }
     };
 
-    // remove file
+    // Remove file
     const removeFile = (index) => {
       setFile((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const CallOpenAI = async (inputText) => {
+    // Get file type icon
+    const getFileIcon = (fileName) => {
+      const extension = fileName.split('.').pop().toLowerCase();
+      
+      const iconMap = {
+        // Documents
+        'pdf': '📄',
+        'doc': '📝',
+        'docx': '📝',
+        'txt': '📋',
+        'md': '📋',
+        
+        // Spreadsheets
+        'csv': '📊',
+        'xlsx': '📊',
+        'xls': '📊',
+        'json': '📊',
+        
+        // Code
+        'js': '🔧',
+        'jsx': '🔧',
+        'ts': '🔧',
+        'tsx': '🔧',
+        'py': '🔧',
+        'java': '🔧',
+        'cpp': '🔧',
+        'c': '🔧',
+        'html': '🔧',
+        'css': '🔧',
+        
+        // Images
+        'jpg': '🖼️',
+        'jpeg': '🖼️',
+        'png': '🖼️',
+        'gif': '🖼️',
+        'webp': '🖼️',
+        'svg': '🖼️',
+        'bmp': '🖼️',
+        
+        // Archives
+        'zip': '🗜️',
+        'rar': '🗜️',
+        'tar': '🗜️',
+        'gz': '🗜️',
+      };
+      
+      return iconMap[extension] || '📎';
+    };
+
+    // Check if file is an image
+    const isImageFile = (fileName) => {
+      const extension = fileName.split('.').pop().toLowerCase();
+      return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(extension);
+    };
+
+    // Get file size in readable format
+    
+
+    const CallOpenAI = async (inputText, uploadedUrls = [], analyzedFilesData = []) => {
       const prompt = inputText || data;
-      if (!prompt.trim()) return;
+      if (!prompt.trim() && analyzedFilesData.length === 0) return;
 
       // Set loading state if not already set
       if (!isLoading) {
@@ -119,7 +226,8 @@ const ThreadApi = forwardRef(
           const messageData = {
             role: "user",
             content: prompt,
-            attachments: files.map((f) => f.name),
+            attachments: analyzedFilesData.map((f) => f.name),
+            fileSummaries: analyzedFilesData.map((f) => f.summary),
             createdAt: serverTimestamp(),
           };
 
@@ -136,12 +244,16 @@ const ThreadApi = forwardRef(
       setIsConversationStarted(true);
 
       // add user message to UI state
+      const userMessageContent = analyzedFilesData.length > 0
+        ? `${prompt}\n\n📎 Attached files: ${analyzedFilesData.map(f => f.summary).join(', ')}`
+        : prompt;
+      
       setResponse((prev) => [
         ...prev,
         {
           role: "user",
-          content: prompt,
-          attachments: files.map((f) => f.name),
+          content: userMessageContent,
+          attachments: analyzedFilesData.map((f) => f.name),
         },
       ]);
 
@@ -180,31 +292,9 @@ const ThreadApi = forwardRef(
           }
         }
 
-        // Send user message to OpenAI
+        // Send user message to OpenAI with analyzed file content
         try {
-          // const messageResponse = await fetch(
-          //   `https://api.openai.com/v1/threads/${thread_id}/messages`,
-          //   {
-          //     method: "POST",
-          //     headers: {
-          //       "Content-Type": "application/json",
-          //       Authorization: `Bearer ${API_Key}`,
-          //       "OpenAI-Beta": "assistants=v2",
-          //     },
-          //     body: JSON.stringify({
-          //       role: "user",
-          //       content: prompt,
-          //     }),
-          //   }
-          // );
-
-          // if (!messageResponse.ok) {
-          //   throw new Error(
-          //     `Failed to send message: ${messageResponse.status}`
-          //   );
-          // }
-
-          await openAiService(thread_id, prompt, UploadedUrls);
+          await openAiService(thread_id, prompt, uploadedUrls, analyzedFilesData);
         } catch (messageError) {
           console.error("Error sending message:", messageError);
           throw new Error("Failed to send your message. Please try again.");
@@ -357,9 +447,9 @@ const ThreadApi = forwardRef(
         }
 
         setFile([]);
+        setAnalyzedFiles([]);
         setData("");
       } catch (error) {
-        console.log("Fetching error", error);
         // Show error in UI
         setResponse((prev) => [
           ...prev,
@@ -400,93 +490,131 @@ const ThreadApi = forwardRef(
         setThreadId(null);
         setChatDocId(null);
         setFile([]);
+        setAnalyzedFiles([]);
         setData("");
         setPendingMessage(null);
         setIsProcessing(false);
         setIsConversationStarted(false);
         setResponse([]);
+        setFileAnalysisProgress('');
       },
     }));
 
     return (
       <div className="w-full py-4 mb-1">
+        {fileAnalysisProgress && (
+          <div className="mb-2 text-sm text-gray-600 flex items-center gap-2">
+            <span className="animate-pulse">📄</span>
+            {fileAnalysisProgress}
+          </div>
+        )}
+
+        {/* File Preview Section - ABOVE input box */}
+        {files.length > 0 && (
+          <div className="bg-gray-50 px-4 py-3 border border-gray-200 rounded-t-xl border-b-0 flex flex-wrap gap-3">
+            {files.map((file, index) => {
+              // For images, show actual preview
+              const imageUrl = isImageFile(file.name) ? URL.createObjectURL(file) : null;
+              
+              return (
+                <div
+                  key={index}
+                  className="relative group bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 hover:shadow-md transition-all"
+                  style={{ width: '100px', height: '100px' }}
+                >
+                  {imageUrl ? (
+                    // Image Preview
+                    <img
+                      src={imageUrl}
+                      alt={file.name}
+                      className="w-full h-full object-cover"
+                      onLoad={() => URL.revokeObjectURL(imageUrl)}
+                    />
+                  ) : (
+                    // File Icon
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-white p-2">
+                      <div className="text-3xl mb-1">
+                        {getFileIcon(file.name)}
+                      </div>
+                      <p className="text-xs font-medium text-gray-700 text-center truncate w-full px-1" title={file.name}>
+                        {file.name.substring(0, 10)}{file.name.length > 10 ? '...' : ''}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Remove Button */}
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                    title="Remove file"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         <div className="relative w-full mx-auto">
-          <div className="relative flex flex-col bg-black/5 outline-none border-none">
+          <div className="relative flex flex-col bg-white rounded-xl shadow-sm border border-gray-100" style={{ borderTopLeftRadius: files.length > 0 ? '0' : '12px', borderTopRightRadius: files.length > 0 ? '0' : '12px' }}>
+            {/* Textarea - FIXED HEIGHT */}
             <textarea
               onChange={(e) => setData(e.target.value)}
               value={data}
               onKeyDown={handlekeyDown}
-              className={`w-full min-h-[95px] max-h-[200px] rounded-xl rounded-b-none px-4 py-3 
-                    bg-[#FFFFFF] text-gray-500 placeholder:text-gray-600 border-0 outline-none resize-none 
+              className={`w-full h-[95px] px-4 py-3 rounded-t-2xl
+                    bg-white text-gray-700 placeholder:text-gray-400 border-0 outline-none resize-none 
                       focus:ring-0 focus:outline-none`}
               placeholder="Ask whatever you want..."
               id="ai-input"
             />
 
-            {files.length > 0 && (
-              <div className="flex flex-wrap gap-2 px-3 py-2">
-                {files.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-xl text-sm"
-                  >
-                    <span className="truncate max-w-[120px]">{file.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(index)}
-                      className="text-gray-500 hover:text-red-500"
-                    >
-                      ✖️
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  <div className="h-14 bg-white rounded-b-2xl flex justify-between items-center px-4">
+                    <div className="flex items-center gap-2">
+                    <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2">
+                      <input
+                      className="hidden"
+                      onChange={handleFile}
+                      ref={inputFileRef}
+                      type="file"
+                      multiple
+                      />
+                
+                      <img className="h-6" src="./assets/attachment.png" alt="Add attachment" title="Add attachment" />
+                      <span className="text-gray-500">Add Attachments</span>
+                    </label>
+                    </div>
 
-            <div className="h-12 bg-white rounded-b-xl flex justify-between items-center px-3">
-              <div className="flex items-center gap-2">
-                <label className="cursor-pointer rounded-lg  ">
-                  <input
-                    className="hidden"
-                    onChange={handleFile}
-                    ref={inputFileRef}
-                    type="file"
-                  />
-                  <img className="h-7" src="./assets/attachment.png" alt="" />
-                </label>
-
-                <span className=" text-gray-500 font-semibold">
-                  Add Attachment
-                </span>
-              </div>
-              <div className="bg-[#593EBD] w-9 h-9 rounded-[10px] mb-2">
-                <button
-                  onClick={handleSendMessage}
-                  disabled={isLoading || isProcessing}
-                  className={`rounded-lg pl-[9px] pt-1 text-white cursor-pointer transition-colors items-center
+                    {/* Send Button */}
+              <button
+                onClick={handleSendMessage}
+                disabled={isLoading || isProcessing}
+                className={`bg-[#593EBD] hover:bg-[#7c5dd8] text-white p-2.5 rounded-lg transition-all flex items-center justify-center
                  ${
                    isLoading || isProcessing
                      ? "opacity-50 cursor-not-allowed"
-                     : "hover:text-gray-400"
+                     : "hover:shadow-md"
                  }`}
-                  type="button"
+                type="button"
+                title="Send message"
+              >
+                <svg
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  height={20}
+                  width={20}
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <svg
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    height={26}
-                    width={16}
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="m22 2-7 20-4-9-9-4Z" />
-                    <path d="M22 2 11 13" />
-                  </svg>
-                </button>
-              </div>
+                  <path d="m22 2-7 20-4-9-9-4Z" />
+                  <path d="M22 2 11 13" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>

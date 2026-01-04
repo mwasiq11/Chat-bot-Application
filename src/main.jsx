@@ -7,6 +7,7 @@ import { RouterProvider, createRoutesFromElements } from "react-router-dom";
 import HistoryPage from "./Components/HistoryPage.jsx";
 import PageNotFound from "./Components/PageNotFound.jsx";
 import ProtectedRoutes from "./Components/ProtectedRoutes.jsx";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,7 +17,7 @@ const router = createBrowserRouter(
 
       {/* App routes */}
       <Route
-        path="/app"
+        path="/app/*"
         element={
           <ProtectedRoutes>
             <App />
@@ -31,5 +32,32 @@ const router = createBrowserRouter(
 );
 
 createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <>
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        duration: 3000,
+        style: {
+          background: '#fff',
+          color: '#363636',
+          borderRadius: '10px',
+          padding: '16px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        },
+        success: {
+          iconTheme: {
+            primary: '#10B981',
+            secondary: '#fff',
+          },
+        },
+        error: {
+          iconTheme: {
+            primary: '#EF4444',
+            secondary: '#fff',
+          },
+        },
+      }}
+    />
+    <RouterProvider router={router} />
+  </>
 );

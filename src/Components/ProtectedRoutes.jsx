@@ -5,17 +5,24 @@ import { useNavigate } from "react-router-dom";
 
 export default function ProtectedRoutes({ children }) {
   const navigate = useNavigate();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setLoading(false);
+      
+      if (!currentUser) {
+        navigate("/");
+      }
     });
-    return () => unsubscribe;
-  }, []);
+    return () => unsubscribe();
+  }, [navigate]);
 
-  if (!user) {
-    navigate("/");
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
-      return children;
-  
+
+  return user ? children : null;
 }

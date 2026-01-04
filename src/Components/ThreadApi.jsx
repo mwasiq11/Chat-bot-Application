@@ -3,7 +3,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { getAuth } from "firebase/auth";
 import {openAiService} from "../firebase/openAiService"
-import Fileservice from "../firebase/fileservice";
+import Fileservice from "../firebase/fileService";
 import { analyzeFile, isFileSupported } from "../firebase/fileAnalysisService";
 
 const API_Key = import.meta.env.VITE_OPEN_AI_API_KEY;
